@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Optional
 
 import click
 from celery import shared_task
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(queue="dataset")
-def create_segment_to_index_task(segment_id: str, keywords: list[str] | None = None):
+def create_segment_to_index_task(segment_id: str, keywords: Optional[list[str]] = None):
     """
     Async create segment to index
     :param segment_id:

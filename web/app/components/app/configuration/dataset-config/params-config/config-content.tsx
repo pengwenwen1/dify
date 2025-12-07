@@ -30,11 +30,11 @@ import { noop } from 'lodash-es'
 type Props = {
   datasetConfigs: DatasetConfigs
   onChange: (configs: DatasetConfigs, isRetrievalModeChange?: boolean) => void
-  selectedDatasets?: DataSet[]
   isInWorkflow?: boolean
   singleRetrievalModelConfig?: ModelConfig
   onSingleRetrievalModelChange?: (config: ModelConfig) => void
   onSingleRetrievalModelParamsChange?: (config: ModelConfig) => void
+  selectedDatasets?: DataSet[]
 }
 
 const ConfigContent: FC<Props> = ({
@@ -61,28 +61,22 @@ const ConfigContent: FC<Props> = ({
 
   const {
     modelList: rerankModelList,
-    currentModel: validDefaultRerankModel,
-    currentProvider: validDefaultRerankProvider,
   } = useModelListAndDefaultModelAndCurrentProviderAndModel(ModelTypeEnum.rerank)
 
-  /**
-   * If reranking model is set and is valid, use the reranking model
-   * Otherwise, check if the default reranking model is valid
-   */
   const {
     currentModel: currentRerankModel,
   } = useCurrentProviderAndModel(
     rerankModelList,
     {
-      provider: datasetConfigs.reranking_model?.reranking_provider_name || validDefaultRerankProvider?.provider || '',
-      model: datasetConfigs.reranking_model?.reranking_model_name || validDefaultRerankModel?.model || '',
+      provider: datasetConfigs.reranking_model?.reranking_provider_name,
+      model: datasetConfigs.reranking_model?.reranking_model_name,
     },
   )
 
   const rerankModel = useMemo(() => {
     return {
-      provider_name: datasetConfigs.reranking_model?.reranking_provider_name ?? '',
-      model_name: datasetConfigs.reranking_model?.reranking_model_name ?? '',
+      provider_name: datasetConfigs?.reranking_model?.reranking_provider_name ?? '',
+      model_name: datasetConfigs?.reranking_model?.reranking_model_name ?? '',
     }
   }, [datasetConfigs.reranking_model])
 
@@ -141,7 +135,7 @@ const ConfigContent: FC<Props> = ({
     })
   }
 
-  const model = singleRetrievalConfig // Legacy code, for compatibility, have to keep it
+  const model = singleRetrievalConfig
 
   const rerankingModeOptions = [
     {
@@ -164,7 +158,7 @@ const ConfigContent: FC<Props> = ({
 
   const canManuallyToggleRerank = useMemo(() => {
     return (selectedDatasetsMode.allInternal && selectedDatasetsMode.allEconomic)
-      || selectedDatasetsMode.allExternal
+    || selectedDatasetsMode.allExternal
   }, [selectedDatasetsMode.allEconomic, selectedDatasetsMode.allExternal, selectedDatasetsMode.allInternal])
 
   const showRerankModel = useMemo(() => {
@@ -174,7 +168,7 @@ const ConfigContent: FC<Props> = ({
     return datasetConfigs.reranking_enable
   }, [datasetConfigs.reranking_enable, canManuallyToggleRerank])
 
-  const handleManuallyToggleRerank = useCallback((enable: boolean) => {
+  const handleDisabledSwitchClick = useCallback((enable: boolean) => {
     if (!currentRerankModel && enable)
       Toast.notify({ type: 'error', message: t('workflow.errorMsg.rerankModelRequired') })
     onChange({
@@ -261,11 +255,12 @@ const ConfigContent: FC<Props> = ({
               <div className='mt-2'>
                 <div className='flex items-center'>
                   {
-                    canManuallyToggleRerank && (
+                    selectedDatasetsMode.allEconomic && !selectedDatasetsMode.mixtureInternalAndExternal && (
                       <Switch
                         size='md'
                         defaultValue={showRerankModel}
-                        onChange={handleManuallyToggleRerank}
+                        disabled={!canManuallyToggleRerank}
+                        onChange={handleDisabledSwitchClick}
                       />
                     )
                   }
@@ -368,6 +363,7 @@ const ConfigContent: FC<Props> = ({
             popupClassName='!w-[387px]'
             portalToFollowElemContentClassName='!z-[1002]'
             isAdvancedMode={true}
+            mode={model?.mode}
             provider={model?.provider}
             completionParams={model?.completion_params}
             modelId={model?.name}

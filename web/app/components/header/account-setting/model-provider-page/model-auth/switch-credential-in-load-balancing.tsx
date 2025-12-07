@@ -37,57 +37,51 @@ const SwitchCredentialInLoadBalancing = ({
   onRemove,
 }: SwitchCredentialInLoadBalancingProps) => {
   const { t } = useTranslation()
-  const notAllowCustomCredential = provider.allow_custom_token === false
+
   const handleItemClick = useCallback((credential: Credential) => {
     setCustomModelCredential(credential)
   }, [setCustomModelCredential])
 
   const renderTrigger = useCallback(() => {
     const selectedCredentialId = customModelCredential?.credential_id
-    const currentCredential = credentials?.find(c => c.credential_id === selectedCredentialId)
-    const empty = !credentials?.length
-    const authRemoved = selectedCredentialId && !currentCredential && !empty
-    const unavailable = currentCredential?.not_allowed_to_use
-
+    const authRemoved = !selectedCredentialId && !!credentials?.length
     let color = 'green'
-    if (authRemoved || unavailable)
+    if (authRemoved && !customModelCredential?.not_allowed_to_use)
       color = 'red'
+    if (customModelCredential?.not_allowed_to_use)
+      color = 'gray'
 
     const Item = (
       <Button
         variant='secondary'
         className={cn(
           'shrink-0 space-x-1',
-          (authRemoved || unavailable) && 'text-components-button-destructive-secondary-text',
-          empty && 'cursor-not-allowed opacity-50',
+          authRemoved && 'text-components-button-destructive-secondary-text',
+          customModelCredential?.not_allowed_to_use && 'cursor-not-allowed opacity-50',
         )}
       >
+        <Indicator
+          className='mr-2'
+          color={color as any}
+        />
         {
-          !empty && (
-            <Indicator
-              className='mr-2'
-              color={color as any}
-            />
-          )
+          authRemoved && !customModelCredential?.not_allowed_to_use && t('common.modelProvider.auth.authRemoved')
         }
         {
-          authRemoved && t('common.modelProvider.auth.authRemoved')
+          !authRemoved && customModelCredential?.not_allowed_to_use && t('plugin.auth.credentialUnavailable')
         }
         {
-          (unavailable || empty) && t('plugin.auth.credentialUnavailableInButton')
+          !authRemoved && !customModelCredential?.not_allowed_to_use && customModelCredential?.credential_name
         }
         {
-          !authRemoved && !unavailable && !empty && customModelCredential?.credential_name
-        }
-        {
-          currentCredential?.from_enterprise && (
+          customModelCredential?.from_enterprise && (
             <Badge className='ml-2'>Enterprise</Badge>
           )
         }
         <RiArrowDownSLine className='h-4 w-4' />
       </Button>
     )
-    if (empty && notAllowCustomCredential) {
+    if (customModelCredential?.not_allowed_to_use) {
       return (
         <Tooltip
           asChild
@@ -98,7 +92,7 @@ const SwitchCredentialInLoadBalancing = ({
       )
     }
     return Item
-  }, [customModelCredential, t, credentials, notAllowCustomCredential])
+  }, [customModelCredential, t, credentials])
 
   return (
     <Authorized
@@ -129,7 +123,6 @@ const SwitchCredentialInLoadBalancing = ({
       enableAddModelCredential
       showItemSelectedIcon
       popupTitle={t('common.modelProvider.auth.modelCredentials')}
-      triggerOnlyOpenModal={!credentials?.length}
     />
   )
 }

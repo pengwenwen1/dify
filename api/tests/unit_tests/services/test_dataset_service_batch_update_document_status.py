@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 # Mock redis_client before importing dataset_service
 from unittest.mock import Mock, call, patch
@@ -36,7 +37,7 @@ class DocumentBatchUpdateTestDataFactory:
         enabled: bool = True,
         archived: bool = False,
         indexing_status: str = "completed",
-        completed_at: datetime.datetime | None = None,
+        completed_at: Optional[datetime.datetime] = None,
         **kwargs,
     ) -> Mock:
         """Create a mock document with specified attributes."""

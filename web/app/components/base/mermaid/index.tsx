@@ -107,13 +107,10 @@ const initMermaid = () => {
   return isMermaidInitialized
 }
 
-type FlowchartProps = {
+const Flowchart = React.forwardRef((props: {
   PrimitiveCode: string
   theme?: 'light' | 'dark'
-  ref?: React.Ref<HTMLDivElement>
-}
-
-const Flowchart = (props: FlowchartProps) => {
+}, ref) => {
   const { t } = useTranslation()
   const [svgString, setSvgString] = useState<string | null>(null)
   const [look, setLook] = useState<'classic' | 'handDrawn'>('classic')
@@ -122,7 +119,7 @@ const Flowchart = (props: FlowchartProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const chartId = useRef(`mermaid-chart-${Math.random().toString(36).slice(2, 11)}`).current
   const [isLoading, setIsLoading] = useState(true)
-  const renderTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const renderTimeoutRef = useRef<NodeJS.Timeout>()
   const [errMsg, setErrMsg] = useState('')
   const [imagePreviewUrl, setImagePreviewUrl] = useState('')
 
@@ -187,7 +184,7 @@ const Flowchart = (props: FlowchartProps) => {
   }, [])
 
   // Update theme when prop changes, but allow internal override.
-  const prevThemeRef = useRef<string | undefined>(undefined)
+  const prevThemeRef = useRef<string>()
   useEffect(() => {
     // Only react if the theme prop from the outside has actually changed.
     if (props.theme && props.theme !== prevThemeRef.current) {
@@ -493,7 +490,7 @@ const Flowchart = (props: FlowchartProps) => {
   }
 
   return (
-    <div ref={props.ref as React.RefObject<HTMLDivElement>} className={themeClasses.container}>
+    <div ref={ref as React.RefObject<HTMLDivElement>} className={themeClasses.container}>
       <div className={themeClasses.segmented}>
         <div className="msh-segmented-group">
           <label className="msh-segmented-item m-2 flex w-[200px] items-center space-x-1">
@@ -541,7 +538,7 @@ const Flowchart = (props: FlowchartProps) => {
       {svgString && (
         <div className={themeClasses.mermaidDiv} style={{ objectFit: 'cover' }} onClick={handlePreviewClick}>
           <div className="absolute bottom-2 left-2 z-[100]">
-            <button type="button"
+            <button
               onClick={(e) => {
                 e.stopPropagation()
                 toggleTheme()
@@ -575,7 +572,7 @@ const Flowchart = (props: FlowchartProps) => {
       )}
     </div>
   )
-}
+})
 
 Flowchart.displayName = 'Flowchart'
 

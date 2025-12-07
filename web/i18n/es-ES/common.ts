@@ -61,16 +61,6 @@ const translation = {
     deSelectAll: 'Deseleccionar todo',
     selectAll: 'Seleccionar todo',
     config: 'Config',
-    confirmAction: 'Por favor, confirme su acción.',
-    deleteConfirmTitle: '¿Eliminar?',
-    yes: 'Sí',
-    no: 'No',
-    noSearchResults: 'No se encontraron {{content}}',
-    resetKeywords: 'Restablecer palabras clave',
-    selectCount: '{{count}} Seleccionado',
-    searchCount: 'Encuentra {{count}} {{content}}',
-    noSearchCount: '0 {{content}}',
-    now: 'Ahora',
   },
   errorMsg: {
     fieldRequired: '{{field}} es requerido',
@@ -79,7 +69,6 @@ const translation = {
   placeholder: {
     input: 'Por favor ingresa',
     select: 'Por favor selecciona',
-    search: 'Buscar...',
   },
   voice: {
     language: {
@@ -172,6 +161,7 @@ const translation = {
     workspace: 'Espacio de trabajo',
     createWorkspace: 'Crear espacio de trabajo',
     helpCenter: 'Ayuda',
+    communityFeedback: 'Comentarios',
     roadmap: 'Hoja de ruta',
     community: 'Comunidad',
     about: 'Acerca de',
@@ -179,8 +169,6 @@ const translation = {
     support: 'Apoyo',
     compliance: 'Cumplimiento',
     github: 'GitHub',
-    contactUs: 'Contáctenos',
-    forum: 'Foro',
   },
   settings: {
     accountGroup: 'CUENTA',
@@ -506,18 +494,7 @@ const translation = {
       modelCredentials: 'Credenciales del modelo',
       addCredential: 'Agregar credencial',
       configLoadBalancing: 'Configuración de balanceo de carga',
-      modelCredential: 'Credencial modelo',
-      selectModelCredential: 'Seleccione una credencial de modelo',
-      addModel: 'Agregar modelo',
-      removeModel: 'Eliminar modelo',
-      customModelCredentials: 'Credenciales de modelo personalizadas',
-      addNewModelCredential: 'Agregar nueva credencial de modelo',
-      manageCredentials: 'Administrar credenciales',
-      customModelCredentialsDeleteTip: 'La credencial está en uso y no se puede eliminar',
-      editModelCredential: 'Editar credencial de modelo',
     },
-    parametersInvalidRemoved: 'Algunos parámetros son inválidos y han sido eliminados',
-    installDataSourceProvider: 'Instalar proveedores de fuentes de datos',
   },
   dataSource: {
     add: 'Agregar una fuente de datos',
@@ -616,7 +593,6 @@ const translation = {
     viewDoc: 'Ver documentación',
     relatedApp: 'aplicaciones vinculadas',
     noRelatedApp: 'No hay aplicaciones vinculadas',
-    pipeline: 'Tubería',
   },
   voiceInput: {
     speaking: 'Habla ahora...',
@@ -733,7 +709,6 @@ const translation = {
     fileExtensionNotSupport: 'Extensión de archivo no compatible',
     pasteFileLinkInputPlaceholder: 'Introduzca la URL...',
     uploadFromComputerLimit: 'El archivo de carga no puede exceder {{size}}',
-    fileExtensionBlocked: 'Este tipo de archivo está bloqueado por motivos de seguridad',
   },
   license: {
     expiring: 'Caduca en un día',
@@ -772,16 +747,6 @@ const translation = {
     subtitle: 'Por favor, díganos qué salió mal con esta respuesta.',
     placeholder: 'Por favor, describe qué salió mal o cómo podemos mejorar...',
     content: 'Contenido de retroalimentación',
-  },
-  label: {
-    optional: '(opcional)',
-  },
-  noData: 'Sin datos',
-  dynamicSelect: {
-    error: 'Error al cargar las opciones',
-    noData: 'No hay opciones disponibles',
-    loading: 'Cargando opciones...',
-    selected: '{{count}} seleccionado',
   },
 }
 

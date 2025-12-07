@@ -81,10 +81,6 @@ const translation = {
       ok: 'ОК',
     },
     learnMore: 'Подробнее',
-    sort: {
-      uploadTime: 'Время загрузки',
-      hitCount: 'Количество извлечений',
-    },
   },
   metadata: {
     title: 'Метаданные',
@@ -103,9 +99,6 @@ const translation = {
       upload_file: 'Загрузить файл',
       notion: 'Синхронизировать из Notion',
       github: 'Синхронизировать из Github',
-      local_file: 'Локальный файл',
-      online_document: 'Онлайн-документ',
-      website_crawl: 'Сканирование сайта',
     },
     type: {
       book: 'Книга',
@@ -343,7 +336,6 @@ const translation = {
     childMaxTokens: 'Ребёнок',
     hierarchical: 'Родитель-дочерний',
     pause: 'Пауза',
-    waiting: 'Ожидание встраивания...',
   },
   segment: {
     paragraphs: 'Абзацы',

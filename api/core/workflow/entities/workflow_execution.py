@@ -7,12 +7,29 @@ implementation details like tenant_id, app_id, etc.
 
 from collections.abc import Mapping
 from datetime import datetime
-from typing import Any
+from enum import StrEnum
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-from core.workflow.enums import WorkflowExecutionStatus, WorkflowType
 from libs.datetime_utils import naive_utc_now
+
+
+class WorkflowType(StrEnum):
+    """
+    Workflow Type Enum for domain layer
+    """
+
+    WORKFLOW = "workflow"
+    CHAT = "chat"
+
+
+class WorkflowExecutionStatus(StrEnum):
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    STOPPED = "stopped"
+    PARTIAL_SUCCEEDED = "partial-succeeded"
 
 
 class WorkflowExecution(BaseModel):
@@ -28,7 +45,7 @@ class WorkflowExecution(BaseModel):
     graph: Mapping[str, Any] = Field(...)
 
     inputs: Mapping[str, Any] = Field(...)
-    outputs: Mapping[str, Any] | None = None
+    outputs: Optional[Mapping[str, Any]] = None
 
     status: WorkflowExecutionStatus = WorkflowExecutionStatus.RUNNING
     error_message: str = Field(default="")
@@ -37,7 +54,7 @@ class WorkflowExecution(BaseModel):
     exceptions_count: int = Field(default=0)
 
     started_at: datetime = Field(...)
-    finished_at: datetime | None = None
+    finished_at: Optional[datetime] = None
 
     @property
     def elapsed_time(self) -> float:

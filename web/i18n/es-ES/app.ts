@@ -80,7 +80,6 @@ const translation = {
     chatbotUserDescription: 'Cree rápidamente un chatbot basado en LLM con una configuración sencilla. Puedes cambiar a Chatflow más tarde.',
     completionUserDescription: 'Cree rápidamente un asistente de IA para tareas de generación de texto con una configuración sencilla.',
     dropDSLToCreateApp: 'Suelta el archivo DSL aquí para crear la aplicación',
-    import: 'Importación',
   },
   editApp: 'Editar información',
   editAppTitle: 'Editar información de la app',
@@ -149,14 +148,6 @@ const translation = {
       viewDocsLink: 'Ver documentación de {{key}}',
       removeConfirmTitle: '¿Eliminar la configuración de {{key}}?',
       removeConfirmContent: 'La configuración actual está en uso, eliminarla desactivará la función de rastreo.',
-      password: 'Contraseña',
-      experimentId: 'ID del experimento',
-      trackingUri: 'URI de seguimiento',
-      username: 'Nombre de usuario',
-      databricksHost: 'URL del espacio de trabajo de Databricks',
-      clientSecret: 'Secreto del cliente OAuth',
-      clientId: 'ID de cliente OAuth',
-      personalAccessToken: 'Token de Acceso Personal (antiguo)',
     },
     view: 'Vista',
     opik: {
@@ -170,18 +161,6 @@ const translation = {
     aliyun: {
       title: 'Monitor de Nubes',
       description: 'La plataforma de observabilidad totalmente gestionada y sin mantenimiento proporcionada por Alibaba Cloud, permite la monitorización, trazado y evaluación de aplicaciones Dify de manera inmediata.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'Plataforma LLMOps de código abierto para seguimiento de experimentos, observabilidad y evaluación, para construir aplicaciones de IA/LLM con confianza.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks ofrece MLflow completamente gestionado con fuerte gobernanza y seguridad para almacenar datos de trazabilidad.',
-    },
-    tencent: {
-      title: 'Tencent APM',
-      description: 'Tencent Application Performance Monitoring proporciona rastreo integral y análisis multidimensional para aplicaciones LLM.',
     },
   },
   answerIcon: {
@@ -302,8 +281,6 @@ const translation = {
       communityDesc: 'Abrir comunidad de Discord',
       feedbackDesc: 'Discusiones de retroalimentación de la comunidad abierta',
       docDesc: 'Abrir la documentación de ayuda',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noAppsFound: 'No se encontraron aplicaciones',
@@ -339,13 +316,7 @@ const translation = {
     tryDifferentSearch: 'Prueba con un término de búsqueda diferente',
     noMatchingCommands: 'No se encontraron comandos coincidentes',
     slashHint: 'Escribe / para ver todos los comandos disponibles',
-    selectToNavigate: 'Seleccionar para navegar',
-    pressEscToClose: 'Presiona ESC para cerrar',
-    startTyping: 'Empieza a escribir para buscar',
-    tips: 'Presiona ↑↓ para navegar',
   },
-  notPublishedYet: 'La aplicación aún no está publicada',
-  noUserInputNode: 'Nodo de entrada de usuario faltante',
 }
 
 export default translation

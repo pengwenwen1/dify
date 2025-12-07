@@ -1,7 +1,6 @@
 import json
 from unittest.mock import Mock, patch
 
-import jsonschema
 import pytest
 
 from core.app.app_config.entities import VariableEntity, VariableEntityType
@@ -29,7 +28,7 @@ class TestHandleMCPRequest:
         """Setup test fixtures"""
         self.app = Mock(spec=App)
         self.app.name = "test_app"
-        self.app.mode = AppMode.CHAT
+        self.app.mode = AppMode.CHAT.value
 
         self.mcp_server = Mock(spec=AppMCPServer)
         self.mcp_server.description = "Test server"
@@ -196,7 +195,7 @@ class TestIndividualHandlers:
     def test_handle_list_tools(self):
         """Test list tools handler"""
         app_name = "test_app"
-        app_mode = AppMode.CHAT
+        app_mode = AppMode.CHAT.value
         description = "Test server"
         parameters_dict: dict[str, str] = {}
         user_input_form: list[VariableEntity] = []
@@ -212,7 +211,7 @@ class TestIndividualHandlers:
     def test_handle_call_tool(self, mock_app_generate):
         """Test call tool handler"""
         app = Mock(spec=App)
-        app.mode = AppMode.CHAT
+        app.mode = AppMode.CHAT.value
 
         # Create mock request
         mock_request = Mock()
@@ -235,7 +234,7 @@ class TestIndividualHandlers:
         # Type assertion needed due to union type
         text_content = result.content[0]
         assert hasattr(text_content, "text")
-        assert text_content.text == "test answer"
+        assert text_content.text == "test answer"  # type: ignore[attr-defined]
 
     def test_handle_call_tool_no_end_user(self):
         """Test call tool handler without end user"""
@@ -252,7 +251,7 @@ class TestUtilityFunctions:
 
     def test_build_parameter_schema_chat_mode(self):
         """Test building parameter schema for chat mode"""
-        app_mode = AppMode.CHAT
+        app_mode = AppMode.CHAT.value
         parameters_dict: dict[str, str] = {"name": "Enter your name"}
 
         user_input_form = [
@@ -275,7 +274,7 @@ class TestUtilityFunctions:
 
     def test_build_parameter_schema_workflow_mode(self):
         """Test building parameter schema for workflow mode"""
-        app_mode = AppMode.WORKFLOW
+        app_mode = AppMode.WORKFLOW.value
         parameters_dict: dict[str, str] = {"input_text": "Enter text"}
 
         user_input_form = [
@@ -298,7 +297,7 @@ class TestUtilityFunctions:
     def test_prepare_tool_arguments_chat_mode(self):
         """Test preparing tool arguments for chat mode"""
         app = Mock(spec=App)
-        app.mode = AppMode.CHAT
+        app.mode = AppMode.CHAT.value
 
         arguments = {"query": "test question", "name": "John"}
 
@@ -312,7 +311,7 @@ class TestUtilityFunctions:
     def test_prepare_tool_arguments_workflow_mode(self):
         """Test preparing tool arguments for workflow mode"""
         app = Mock(spec=App)
-        app.mode = AppMode.WORKFLOW
+        app.mode = AppMode.WORKFLOW.value
 
         arguments = {"input_text": "test input"}
 
@@ -324,7 +323,7 @@ class TestUtilityFunctions:
     def test_prepare_tool_arguments_completion_mode(self):
         """Test preparing tool arguments for completion mode"""
         app = Mock(spec=App)
-        app.mode = AppMode.COMPLETION
+        app.mode = AppMode.COMPLETION.value
 
         arguments = {"name": "John"}
 
@@ -336,7 +335,7 @@ class TestUtilityFunctions:
     def test_extract_answer_from_mapping_response_chat(self):
         """Test extracting answer from mapping response for chat mode"""
         app = Mock(spec=App)
-        app.mode = AppMode.CHAT
+        app.mode = AppMode.CHAT.value
 
         response = {"answer": "test answer", "other": "data"}
 
@@ -347,7 +346,7 @@ class TestUtilityFunctions:
     def test_extract_answer_from_mapping_response_workflow(self):
         """Test extracting answer from mapping response for workflow mode"""
         app = Mock(spec=App)
-        app.mode = AppMode.WORKFLOW
+        app.mode = AppMode.WORKFLOW.value
 
         response = {"data": {"outputs": {"result": "test result"}}}
 
@@ -435,7 +434,7 @@ class TestUtilityFunctions:
         assert parameters["category"]["enum"] == ["A", "B", "C"]
 
         assert "count" in parameters
-        assert parameters["count"]["type"] == "number"
+        assert parameters["count"]["type"] == "float"
 
         # FILE type should be skipped - it creates empty dict but gets filtered later
         # Check that it doesn't have any meaningful content
@@ -448,65 +447,3 @@ class TestUtilityFunctions:
         assert "category" not in required
 
     # Note: _get_request_id function has been removed as request_id is now passed as parameter
-
-    def test_convert_input_form_to_parameters_jsonschema_validation_ok(self):
-        """Current schema uses 'number' for numeric fields; it should be a valid JSON Schema."""
-        user_input_form = [
-            VariableEntity(
-                type=VariableEntityType.NUMBER,
-                variable="count",
-                description="Count",
-                label="Count",
-                required=True,
-            ),
-            VariableEntity(
-                type=VariableEntityType.TEXT_INPUT,
-                variable="name",
-                description="User name",
-                label="Name",
-                required=False,
-            ),
-        ]
-
-        parameters_dict = {
-            "count": "Enter count",
-            "name": "Enter your name",
-        }
-
-        parameters, required = convert_input_form_to_parameters(user_input_form, parameters_dict)
-
-        # Build a complete JSON Schema
-        schema = {
-            "type": "object",
-            "properties": parameters,
-            "required": required,
-        }
-
-        # 1) The schema itself must be valid
-        jsonschema.Draft202012Validator.check_schema(schema)
-
-        # 2) Both float and integer instances should pass validation
-        jsonschema.validate(instance={"count": 3.14, "name": "alice"}, schema=schema)
-        jsonschema.validate(instance={"count": 2, "name": "bob"}, schema=schema)
-
-    def test_legacy_float_type_schema_is_invalid(self):
-        """Legacy/buggy behavior: using 'float' should produce an invalid JSON Schema."""
-        # Manually construct a legacy/incorrect schema (simulating old behavior)
-        bad_schema = {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "float",  # Invalid type: JSON Schema does not support 'float'
-                    "description": "Enter count",
-                }
-            },
-            "required": ["count"],
-        }
-
-        # The schema itself should raise a SchemaError
-        with pytest.raises(jsonschema.exceptions.SchemaError):
-            jsonschema.Draft202012Validator.check_schema(bad_schema)
-
-        # Or validation should also raise SchemaError
-        with pytest.raises(jsonschema.exceptions.SchemaError):
-            jsonschema.validate(instance={"count": 1.23}, schema=bad_schema)

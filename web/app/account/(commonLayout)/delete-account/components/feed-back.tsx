@@ -8,7 +8,7 @@ import Button from '@/app/components/base/button'
 import CustomDialog from '@/app/components/base/dialog'
 import Textarea from '@/app/components/base/textarea'
 import Toast from '@/app/components/base/toast'
-import { useLogout } from '@/service/use-common'
+import { logout } from '@/service/common'
 
 type DeleteAccountProps = {
   onCancel: () => void
@@ -22,11 +22,14 @@ export default function FeedBack(props: DeleteAccountProps) {
   const [userFeedback, setUserFeedback] = useState('')
   const { isPending, mutateAsync: sendFeedback } = useDeleteAccountFeedback()
 
-  const { mutateAsync: logout } = useLogout()
   const handleSuccess = useCallback(async () => {
     try {
-      await logout()
-      // Tokens are now stored in cookies and cleared by backend
+      await logout({
+        url: '/logout',
+        params: {},
+      })
+      localStorage.removeItem('refresh_token')
+      localStorage.removeItem('console_token')
       router.push('/signin')
       Toast.notify({ type: 'info', message: t('common.account.deleteSuccessTip') })
     }

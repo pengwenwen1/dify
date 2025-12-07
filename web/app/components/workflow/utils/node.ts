@@ -135,13 +135,6 @@ export const getTopLeftNodePosition = (nodes: Node[]) => {
   }
 }
 
-export const getNestedNodePosition = (node: Node, parentNode: Node) => {
-  return {
-    x: node.position.x - parentNode.position.x,
-    y: node.position.y - parentNode.position.y,
-  }
-}
-
 export const hasRetryNode = (nodeType?: BlockEnum) => {
   return nodeType === BlockEnum.LLM || nodeType === BlockEnum.Tool || nodeType === BlockEnum.HttpRequest || nodeType === BlockEnum.Code
 }

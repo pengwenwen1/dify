@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 import orjson
 
@@ -6,6 +6,6 @@ import orjson
 def orjson_dumps(
     obj: Any,
     encoding: str = "utf-8",
-    option: int | None = None,
+    option: Optional[int] = None,
 ) -> str:
     return orjson.dumps(obj, option=option).decode(encoding)

@@ -21,7 +21,7 @@ const i18nPrefix = 'plugin.upgrade'
 
 type Props = {
   payload: UpdateFromMarketPlacePayload
-  pluginId?: string
+  pluginId: string
   onSave: () => void
   onCancel: () => void
   isShowDowngradeWarningModal?: boolean
@@ -113,11 +113,9 @@ const UpdatePluginModal: FC<Props> = ({
   const { mutateAsync } = useRemoveAutoUpgrade()
   const invalidateReferenceSettings = useInvalidateReferenceSettings()
   const handleExcludeAndDownload = async () => {
-    if (pluginId) {
-      await mutateAsync({
-        plugin_id: pluginId,
-      })
-    }
+    await mutateAsync({
+      plugin_id: pluginId,
+    })
     invalidateReferenceSettings()
     handleConfirm()
   }

@@ -4,7 +4,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { produce } from 'immer'
+import produce from 'immer'
 import { isEqual } from 'lodash-es'
 import { v4 as uuid4 } from 'uuid'
 import type { ValueSelector, Var } from '../../types'
@@ -32,7 +32,7 @@ import {
   getMultipleRetrievalConfig,
   getSelectedDatasetsMode,
 } from './utils'
-import { AppModeEnum, RETRIEVE_TYPE } from '@/types/app'
+import { RETRIEVE_TYPE } from '@/types/app'
 import { DATASET_DEFAULT } from '@/config'
 import type { DataSet } from '@/models/datasets'
 import { fetchDatasets } from '@/service/datasets'
@@ -204,11 +204,10 @@ const useConfig = (id: string, payload: KnowledgeRetrievalNodeType) => {
 
   const handleMultipleRetrievalConfigChange = useCallback((newConfig: MultipleRetrievalConfig) => {
     const newInputs = produce(inputs, (draft) => {
-      const newMultipleRetrievalConfig = getMultipleRetrievalConfig(newConfig!, selectedDatasets, selectedDatasets, {
+      draft.multiple_retrieval_config = getMultipleRetrievalConfig(newConfig!, selectedDatasets, selectedDatasets, {
         provider: currentRerankProvider?.provider,
         model: currentRerankModel?.model,
       })
-      draft.multiple_retrieval_config = newMultipleRetrievalConfig
     })
     setInputs(newInputs)
   }, [inputs, setInputs, selectedDatasets, currentRerankModel, currentRerankProvider])
@@ -255,11 +254,10 @@ const useConfig = (id: string, payload: KnowledgeRetrievalNodeType) => {
 
       if (payload.retrieval_mode === RETRIEVE_TYPE.multiWay && newDatasets.length > 0) {
         const multipleRetrievalConfig = draft.multiple_retrieval_config
-        const newMultipleRetrievalConfig = getMultipleRetrievalConfig(multipleRetrievalConfig!, newDatasets, selectedDatasets, {
+        draft.multiple_retrieval_config = getMultipleRetrievalConfig(multipleRetrievalConfig!, newDatasets, selectedDatasets, {
           provider: currentRerankProvider?.provider,
           model: currentRerankModel?.model,
         })
-        draft.multiple_retrieval_config = newMultipleRetrievalConfig
       }
     })
     updateDatasetsDetail(newDatasets)
@@ -344,7 +342,7 @@ const useConfig = (id: string, payload: KnowledgeRetrievalNodeType) => {
       draft.metadata_model_config = {
         provider: model.provider,
         name: model.modelId,
-        mode: model.mode || AppModeEnum.CHAT,
+        mode: model.mode || 'chat',
         completion_params: draft.metadata_model_config?.completion_params || { temperature: 0.7 },
       }
     })

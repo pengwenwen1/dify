@@ -6,8 +6,6 @@ const translation = {
     bundles: 'Pacchetti',
     models: 'Modelli',
     all: 'Tutto',
-    datasources: 'Fonti dei dati',
-    triggers: 'Trigger',
   },
   categorySingle: {
     bundle: 'Fascio',
@@ -15,8 +13,6 @@ const translation = {
     agent: 'Strategia dell\'agente',
     extension: 'Estensione',
     tool: 'Strumento',
-    datasource: 'Origine dati',
-    trigger: 'Innescare',
   },
   list: {
     source: {
@@ -47,7 +43,6 @@ const translation = {
       viewDetail: 'vedi dettagli',
       checkUpdate: 'Controlla l\'aggiornamento',
       info: 'Informazioni sul plugin',
-      back: 'Indietro',
     },
     toolSelector: {
       paramsTip1: 'Controlla i parametri di inferenza LLM.',
@@ -254,9 +249,6 @@ const translation = {
     unavailable: 'Non disponibile',
     customCredentialUnavailable: 'Le credenziali personalizzate attualmente non sono disponibili',
     credentialUnavailable: 'Credenziali attualmente non disponibili. Si prega di contattare l\'amministratore.',
-    credentialUnavailableInButton: 'Credenziali non disponibili',
-    emptyAuth: 'Configurare l\'autenticazione',
-    connectedWorkspace: 'Area di lavoro connessa',
   },
   deprecated: 'Deprecato',
   autoUpdate: {
@@ -308,12 +300,6 @@ const translation = {
     changeTimezone: 'Per cambiare il fuso orario, vai su <setTimezone>Impostazioni</setTimezone>',
     excludeUpdate: 'I seguenti {{num}} plugin non si aggiorneranno automaticamente',
     updateTimeTitle: 'Tempo di aggiornamento',
-  },
-  readmeInfo: {
-    title: 'LEGGIMI',
-    needHelpCheckReadme: 'Hai bisogno di aiuto? Controlla il README.',
-    noReadmeAvailable: 'Nessun README disponibile',
-    failedToFetch: 'Impossibile recuperare il README',
   },
 }
 

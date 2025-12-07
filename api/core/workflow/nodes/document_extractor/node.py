@@ -5,15 +5,15 @@ import logging
 import os
 import tempfile
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, Optional
 
-import charset_normalizer
+import chardet
 import docx
 import pandas as pd
-import pypandoc
-import pypdfium2
-import webvtt
-import yaml
+import pypandoc  # type: ignore
+import pypdfium2  # type: ignore
+import webvtt  # type: ignore
+import yaml  # type: ignore
 from docx.document import Document
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
@@ -25,9 +25,11 @@ from core.file import File, FileTransferMethod, file_manager
 from core.helper import ssrf_proxy
 from core.variables import ArrayFileSegment
 from core.variables.segments import ArrayStringSegment, FileSegment
-from core.workflow.enums import NodeType, WorkflowNodeExecutionStatus
-from core.workflow.node_events import NodeRunResult
-from core.workflow.nodes.base.node import Node
+from core.workflow.entities.node_entities import NodeRunResult
+from core.workflow.entities.workflow_node_execution import WorkflowNodeExecutionStatus
+from core.workflow.nodes.base import BaseNode
+from core.workflow.nodes.base.entities import BaseNodeData, RetryConfig
+from core.workflow.nodes.enums import ErrorStrategy, NodeType
 
 from .entities import DocumentExtractorNodeData
 from .exc import DocumentExtractorError, FileDownloadError, TextExtractionError, UnsupportedFileTypeError
@@ -35,20 +37,43 @@ from .exc import DocumentExtractorError, FileDownloadError, TextExtractionError,
 logger = logging.getLogger(__name__)
 
 
-class DocumentExtractorNode(Node[DocumentExtractorNodeData]):
+class DocumentExtractorNode(BaseNode):
     """
     Extracts text content from various file types.
     Supports plain text, PDF, and DOC/DOCX files.
     """
 
-    node_type = NodeType.DOCUMENT_EXTRACTOR
+    _node_type = NodeType.DOCUMENT_EXTRACTOR
+
+    _node_data: DocumentExtractorNodeData
+
+    def init_node_data(self, data: Mapping[str, Any]) -> None:
+        self._node_data = DocumentExtractorNodeData.model_validate(data)
+
+    def _get_error_strategy(self) -> Optional[ErrorStrategy]:
+        return self._node_data.error_strategy
+
+    def _get_retry_config(self) -> RetryConfig:
+        return self._node_data.retry_config
+
+    def _get_title(self) -> str:
+        return self._node_data.title
+
+    def _get_description(self) -> Optional[str]:
+        return self._node_data.desc
+
+    def _get_default_value_dict(self) -> dict[str, Any]:
+        return self._node_data.default_value_dict
+
+    def get_base_node_data(self) -> BaseNodeData:
+        return self._node_data
 
     @classmethod
     def version(cls) -> str:
         return "1"
 
     def _run(self):
-        variable_selector = self.node_data.variable_selector
+        variable_selector = self._node_data.variable_selector
         variable = self.graph_runtime_state.variable_pool.get(variable_selector)
 
         if variable is None:
@@ -147,7 +172,6 @@ def _extract_text_by_file_extension(*, file_content: bytes, file_extension: str)
             ".txt"
             | ".markdown"
             | ".md"
-            | ".mdx"
             | ".html"
             | ".htm"
             | ".xml"
@@ -228,12 +252,9 @@ def _extract_text_by_file_extension(*, file_content: bytes, file_extension: str)
 
 def _extract_text_from_plain_text(file_content: bytes) -> str:
     try:
-        # Detect encoding using charset_normalizer
-        result = charset_normalizer.from_bytes(file_content, cp_isolation=["utf_8", "latin_1", "cp1252"]).best()
-        if result:
-            encoding = result.encoding
-        else:
-            encoding = "utf-8"
+        # Detect encoding using chardet
+        result = chardet.detect(file_content)
+        encoding = result["encoding"]
 
         # Fallback to utf-8 if detection fails
         if not encoding:
@@ -250,12 +271,9 @@ def _extract_text_from_plain_text(file_content: bytes) -> str:
 
 def _extract_text_from_json(file_content: bytes) -> str:
     try:
-        # Detect encoding using charset_normalizer
-        result = charset_normalizer.from_bytes(file_content).best()
-        if result:
-            encoding = result.encoding
-        else:
-            encoding = "utf-8"
+        # Detect encoding using chardet
+        result = chardet.detect(file_content)
+        encoding = result["encoding"]
 
         # Fallback to utf-8 if detection fails
         if not encoding:
@@ -275,12 +293,9 @@ def _extract_text_from_json(file_content: bytes) -> str:
 def _extract_text_from_yaml(file_content: bytes) -> str:
     """Extract the content from yaml file"""
     try:
-        # Detect encoding using charset_normalizer
-        result = charset_normalizer.from_bytes(file_content).best()
-        if result:
-            encoding = result.encoding
-        else:
-            encoding = "utf-8"
+        # Detect encoding using chardet
+        result = chardet.detect(file_content)
+        encoding = result["encoding"]
 
         # Fallback to utf-8 if detection fails
         if not encoding:
@@ -433,12 +448,9 @@ def _extract_text_from_file(file: File):
 
 def _extract_text_from_csv(file_content: bytes) -> str:
     try:
-        # Detect encoding using charset_normalizer
-        result = charset_normalizer.from_bytes(file_content).best()
-        if result:
-            encoding = result.encoding
-        else:
-            encoding = "utf-8"
+        # Detect encoding using chardet
+        result = chardet.detect(file_content)
+        encoding = result["encoding"]
 
         # Fallback to utf-8 if detection fails
         if not encoding:

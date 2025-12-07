@@ -61,21 +61,10 @@ const translation = {
     deSelectAll: 'Odznacz wszystkie',
     selectAll: 'Zaznacz wszystkie',
     config: 'Konfiguracja',
-    yes: 'Tak',
-    no: 'Nie',
-    deleteConfirmTitle: 'Usunąć?',
-    confirmAction: 'Proszę potwierdzić swoją akcję.',
-    noSearchResults: 'Nie znaleziono {{content}}',
-    resetKeywords: 'Resetuj słowa kluczowe',
-    selectCount: '{{count}} Wybrane',
-    searchCount: 'Znajdź {{count}} {{content}}',
-    noSearchCount: '0 {{content}}',
-    now: 'Teraz',
   },
   placeholder: {
     input: 'Proszę wprowadzić',
     select: 'Proszę wybrać',
-    search: 'Szukaj...',
   },
   voice: {
     language: {
@@ -173,6 +162,7 @@ const translation = {
     workspace: 'Przestrzeń robocza',
     createWorkspace: 'Utwórz przestrzeń roboczą',
     helpCenter: 'Pomoc',
+    communityFeedback: 'Opinie',
     roadmap: 'Plan działania',
     community: 'Społeczność',
     about: 'O',
@@ -180,8 +170,6 @@ const translation = {
     support: 'Wsparcie',
     github: 'GitHub',
     compliance: 'Zgodność',
-    contactUs: 'Skontaktuj się z nami',
-    forum: 'Forum',
   },
   settings: {
     accountGroup: 'KONTO',
@@ -515,18 +503,7 @@ const translation = {
       addNewModel: 'Dodaj nowy model',
       authRemoved: 'Autoryzacja usunięta',
       addModelCredential: 'Dodaj dane uwierzytelniające modelu',
-      customModelCredentials: 'Poświadczenia modelu niestandardowego',
-      modelCredential: 'Poświadczenie modelu',
-      removeModel: 'Usuń model',
-      addModel: 'Dodaj model',
-      manageCredentials: 'Zarządzanie poświadczeniami',
-      addNewModelCredential: 'Dodawanie nowego poświadczenia modelu',
-      customModelCredentialsDeleteTip: 'Poświadczenie jest w użyciu i nie można go usunąć',
-      selectModelCredential: 'Wybieranie poświadczeń modelu',
-      editModelCredential: 'Edytowanie poświadczeń modelu',
     },
-    parametersInvalidRemoved: 'Niektóre parametry są nieprawidłowe i zostały usunięte.',
-    installDataSourceProvider: 'Zainstaluj dostawców źródeł danych',
   },
   dataSource: {
     add: 'Dodaj źródło danych',
@@ -627,7 +604,6 @@ const translation = {
     viewDoc: 'Zobacz dokumentację',
     relatedApp: 'powiązane aplikacje',
     noRelatedApp: 'Brak połączonych aplikacji',
-    pipeline: 'Rurociąg',
   },
   voiceInput: {
     speaking: 'Mów teraz...',
@@ -751,7 +727,6 @@ const translation = {
     uploadFromComputerReadError: 'Odczyt pliku nie powiódł się, spróbuj ponownie.',
     fileExtensionNotSupport: 'Rozszerzenie pliku nie jest obsługiwane',
     uploadFromComputer: 'Przesyłanie lokalne',
-    fileExtensionBlocked: 'Ten typ pliku jest zablokowany ze względów bezpieczeństwa',
   },
   license: {
     expiring_plural: 'Wygasa za {{count}} dni',
@@ -790,16 +765,6 @@ const translation = {
     content: 'Treść opinii',
     subtitle: 'Proszę powiedz nam, co poszło nie tak z tą odpowiedzią.',
     placeholder: 'Proszę opisać, co poszło nie tak lub jak możemy poprawić...',
-  },
-  label: {
-    optional: '(Opcjonalnie)',
-  },
-  noData: 'Brak danych',
-  dynamicSelect: {
-    error: 'Nie udało się załadować opcji',
-    noData: 'Brak dostępnych opcji',
-    loading: 'Ładowanie opcji...',
-    selected: '{{count}} wybrano',
   },
 }
 

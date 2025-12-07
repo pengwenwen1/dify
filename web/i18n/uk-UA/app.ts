@@ -80,7 +80,6 @@ const translation = {
     completionUserDescription: 'Швидко створюйте помічника зі штучним інтелектом для завдань із генерації тексту за допомогою простої конфігурації.',
     workflowUserDescription: 'ізуально створюйте автономні ШІ-процеси з простотою перетягування.',
     dropDSLToCreateApp: 'Перетягніть файл DSL сюди, щоб створити додаток',
-    import: 'Імпорт',
   },
   editApp: 'Редагувати інформацію',
   editAppTitle: 'Редагувати інформацію про додаток',
@@ -149,14 +148,6 @@ const translation = {
       viewDocsLink: 'Переглянути документацію {{key}}',
       removeConfirmTitle: 'Видалити налаштування {{key}}?',
       removeConfirmContent: 'Поточне налаштування використовується, його видалення вимкне функцію Відстеження.',
-      password: 'Пароль',
-      databricksHost: 'URL робочого простору Databricks',
-      clientId: 'Ідентифікатор клієнта OAuth',
-      experimentId: 'Ідентифікатор експерименту',
-      trackingUri: 'Відстеження URI',
-      personalAccessToken: 'Персональний токен доступу (застарілий)',
-      username: 'Ім\'я користувача',
-      clientSecret: 'Секретний ключ клієнта OAuth',
     },
     view: 'Вид',
     opik: {
@@ -170,18 +161,6 @@ const translation = {
     aliyun: {
       title: 'Моніторинг Хмари',
       description: 'Повністю керовані та без обслуговування платформи спостереження, надані Alibaba Cloud, дозволяють миттєвий моніторинг, трасування та оцінку застосувань Dify.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'Платформа LLMOps з відкритим кодом для відстеження експериментів, спостережуваності та оцінки, для створення додатків AI/LLM з впевненістю.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks пропонує повністю керований MLflow з сильною управлінням та безпекою для зберігання даних трасування.',
-    },
-    tencent: {
-      title: 'Tencent APM',
-      description: 'Сервіс моніторингу продуктивності додатків Tencent забезпечує комплексне трасування та багатовимірний аналіз додатків LLM.',
     },
   },
   answerIcon: {
@@ -302,8 +281,6 @@ const translation = {
       docDesc: 'Відкрийте документацію допомоги',
       accountDesc: 'Перейдіть на сторінку облікового запису',
       communityDesc: 'Відкрита Discord-спільнота',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noPluginsFound: 'Плагінів не знайдено',
@@ -339,13 +316,7 @@ const translation = {
     noMatchingCommands: 'Відповідних команд не знайдено',
     tryDifferentSearch: 'Спробуйте інший пошуковий термін',
     slashHint: 'Наберіть / , щоб побачити всі доступні команди',
-    selectToNavigate: 'Виберіть, щоб перейти',
-    tips: 'Натисніть ↑↓ для навігації',
-    startTyping: 'Почніть вводити для пошуку',
-    pressEscToClose: 'Натисніть ESC, щоб закрити',
   },
-  notPublishedYet: 'Додаток ще не опублікований',
-  noUserInputNode: 'Відсутній вузол введення користувача',
 }
 
 export default translation

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any
+from typing import Any, Optional
 
 import orjson
 from pydantic import BaseModel
@@ -29,10 +29,10 @@ class Jieba(BaseKeyword):
         with redis_client.lock(lock_name, timeout=600):
             keyword_table_handler = JiebaKeywordTableHandler()
             keyword_table = self._get_dataset_keyword_table()
-            keyword_number = self.dataset.keyword_number or self._config.max_keywords_per_chunk
-
             for text in texts:
-                keywords = keyword_table_handler.extract_keywords(text.page_content, keyword_number)
+                keywords = keyword_table_handler.extract_keywords(
+                    text.page_content, self._config.max_keywords_per_chunk
+                )
                 if text.metadata is not None:
                     self._update_segment_keywords(self.dataset.id, text.metadata["doc_id"], list(keywords))
                     keyword_table = self._add_text_to_keyword_table(
@@ -50,15 +50,18 @@ class Jieba(BaseKeyword):
 
             keyword_table = self._get_dataset_keyword_table()
             keywords_list = kwargs.get("keywords_list")
-            keyword_number = self.dataset.keyword_number or self._config.max_keywords_per_chunk
             for i in range(len(texts)):
                 text = texts[i]
                 if keywords_list:
                     keywords = keywords_list[i]
                     if not keywords:
-                        keywords = keyword_table_handler.extract_keywords(text.page_content, keyword_number)
+                        keywords = keyword_table_handler.extract_keywords(
+                            text.page_content, self._config.max_keywords_per_chunk
+                        )
                 else:
-                    keywords = keyword_table_handler.extract_keywords(text.page_content, keyword_number)
+                    keywords = keyword_table_handler.extract_keywords(
+                        text.page_content, self._config.max_keywords_per_chunk
+                    )
                 if text.metadata is not None:
                     self._update_segment_keywords(self.dataset.id, text.metadata["doc_id"], list(keywords))
                     keyword_table = self._add_text_to_keyword_table(
@@ -73,7 +76,7 @@ class Jieba(BaseKeyword):
             return False
         return id in set.union(*keyword_table.values())
 
-    def delete_by_ids(self, ids: list[str]):
+    def delete_by_ids(self, ids: list[str]) -> None:
         lock_name = f"keyword_indexing_lock_{self.dataset.id}"
         with redis_client.lock(lock_name, timeout=600):
             keyword_table = self._get_dataset_keyword_table()
@@ -113,7 +116,7 @@ class Jieba(BaseKeyword):
 
         return documents
 
-    def delete(self):
+    def delete(self) -> None:
         lock_name = f"keyword_indexing_lock_{self.dataset.id}"
         with redis_client.lock(lock_name, timeout=600):
             dataset_keyword_table = self.dataset.dataset_keyword_table
@@ -140,7 +143,7 @@ class Jieba(BaseKeyword):
                 storage.delete(file_key)
             storage.save(file_key, dumps_with_sets(keyword_table_dict).encode("utf-8"))
 
-    def _get_dataset_keyword_table(self) -> dict | None:
+    def _get_dataset_keyword_table(self) -> Optional[dict]:
         dataset_keyword_table = self.dataset.dataset_keyword_table
         if dataset_keyword_table:
             keyword_table_dict = dataset_keyword_table.keyword_table_dict
@@ -165,14 +168,14 @@ class Jieba(BaseKeyword):
 
         return {}
 
-    def _add_text_to_keyword_table(self, keyword_table: dict, id: str, keywords: list[str]):
+    def _add_text_to_keyword_table(self, keyword_table: dict, id: str, keywords: list[str]) -> dict:
         for keyword in keywords:
             if keyword not in keyword_table:
                 keyword_table[keyword] = set()
             keyword_table[keyword].add(id)
         return keyword_table
 
-    def _delete_ids_from_keyword_table(self, keyword_table: dict, ids: list[str]):
+    def _delete_ids_from_keyword_table(self, keyword_table: dict, ids: list[str]) -> dict:
         # get set of ids that correspond to node
         node_idxs_to_delete = set(ids)
 
@@ -235,9 +238,7 @@ class Jieba(BaseKeyword):
                     keyword_table or {}, segment.index_node_id, pre_segment_data["keywords"]
                 )
             else:
-                keyword_number = self.dataset.keyword_number or self._config.max_keywords_per_chunk
-
-                keywords = keyword_table_handler.extract_keywords(segment.content, keyword_number)
+                keywords = keyword_table_handler.extract_keywords(segment.content, self._config.max_keywords_per_chunk)
                 segment.keywords = list(keywords)
                 keyword_table = self._add_text_to_keyword_table(
                     keyword_table or {}, segment.index_node_id, list(keywords)
@@ -250,7 +251,7 @@ class Jieba(BaseKeyword):
         self._save_dataset_keyword_table(keyword_table)
 
 
-def set_orjson_default(obj: Any):
+def set_orjson_default(obj: Any) -> Any:
     """Default function for orjson serialization of set types"""
     if isinstance(obj, set):
         return list(obj)

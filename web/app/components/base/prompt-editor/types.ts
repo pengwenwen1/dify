@@ -69,8 +69,6 @@ export type WorkflowVariableBlockType = {
   onInsert?: () => void
   onDelete?: () => void
   getVarType?: GetVarType
-  showManageInputField?: boolean
-  onManageInputField?: () => void
 }
 
 export type MenuTextMatch = {

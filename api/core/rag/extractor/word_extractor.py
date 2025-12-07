@@ -9,7 +9,7 @@ import uuid
 from urllib.parse import urlparse
 from xml.etree import ElementTree
 
-import httpx
+import requests
 from docx import Document as DocxDocument
 
 from configs import dify_config
@@ -43,24 +43,20 @@ class WordExtractor(BaseExtractor):
 
         # If the file is a web path, download it to a temporary file, and use that
         if not os.path.isfile(self.file_path) and self._is_valid_url(self.file_path):
-            response = httpx.get(self.file_path, timeout=None)
+            r = requests.get(self.file_path)
 
-            if response.status_code != 200:
-                response.close()
-                raise ValueError(f"Check the url of your file; returned status code {response.status_code}")
+            if r.status_code != 200:
+                raise ValueError(f"Check the url of your file; returned status code {r.status_code}")
 
             self.web_path = self.file_path
             # TODO: use a better way to handle the file
             self.temp_file = tempfile.NamedTemporaryFile()  # noqa SIM115
-            try:
-                self.temp_file.write(response.content)
-            finally:
-                response.close()
+            self.temp_file.write(r.content)
             self.file_path = self.temp_file.name
         elif not os.path.isfile(self.file_path):
             raise ValueError(f"File path {self.file_path} is not a valid file or url")
 
-    def __del__(self):
+    def __del__(self) -> None:
         if hasattr(self, "temp_file"):
             self.temp_file.close()
 
@@ -152,15 +148,13 @@ class WordExtractor(BaseExtractor):
         # Initialize a row, all of which are empty by default
         row_cells = [""] * total_cols
         col_index = 0
-        while col_index < len(row.cells):
+        for cell in row.cells:
             # make sure the col_index is not out of range
-            while col_index < len(row.cells) and row_cells[col_index] != "":
+            while col_index < total_cols and row_cells[col_index] != "":
                 col_index += 1
             # if col_index is out of range the loop is jumped
-            if col_index >= len(row.cells):
+            if col_index >= total_cols:
                 break
-            # get the correct cell
-            cell = row.cells[col_index]
             cell_content = self._parse_cell(cell, image_map).strip()
             cell_colspan = cell.grid_span or 1
             for i in range(cell_colspan):

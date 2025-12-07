@@ -1,6 +1,5 @@
 import array
 import json
-import logging
 import re
 import uuid
 from typing import Any
@@ -20,8 +19,6 @@ from core.rag.models.document import Document
 from extensions.ext_redis import redis_client
 from models.dataset import Dataset
 
-logger = logging.getLogger(__name__)
-
 oracledb.defaults.fetch_lobs = False
 
 
@@ -36,7 +33,7 @@ class OracleVectorConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_config(cls, values: dict):
+    def validate_config(cls, values: dict) -> dict:
         if not values["user"]:
             raise ValueError("config ORACLE_USER is required")
         if not values["password"]:
@@ -183,8 +180,8 @@ class OracleVector(BaseVector):
                             value,
                         )
                         conn.commit()
-                    except Exception:
-                        logger.exception("Failed to insert record %s into %s", value[0], self.table_name)
+                    except Exception as e:
+                        print(e)
             conn.close()
         return pks
 
@@ -209,7 +206,7 @@ class OracleVector(BaseVector):
             conn.close()
         return docs
 
-    def delete_by_ids(self, ids: list[str]):
+    def delete_by_ids(self, ids: list[str]) -> None:
         if not ids:
             return
         with self._get_connection() as conn:
@@ -219,7 +216,7 @@ class OracleVector(BaseVector):
             conn.commit()
             conn.close()
 
-    def delete_by_metadata_field(self, key: str, value: str):
+    def delete_by_metadata_field(self, key: str, value: str) -> None:
         with self._get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(f"DELETE FROM {self.table_name} WHERE JSON_VALUE(meta, '$." + key + "') = :1", (value,))
@@ -302,7 +299,8 @@ class OracleVector(BaseVector):
                     nltk.data.find("tokenizers/punkt")
                     nltk.data.find("corpora/stopwords")
                 except LookupError:
-                    raise LookupError("Unable to find the required NLTK data package: punkt and stopwords")
+                    nltk.download("punkt")
+                    nltk.download("stopwords")
                 e_str = re.sub(r"[^\w ]", "", query)
                 all_tokens = nltk.word_tokenize(e_str)
                 stop_words = stopwords.words("english")
@@ -338,7 +336,7 @@ class OracleVector(BaseVector):
         else:
             return [Document(page_content="", metadata={})]
 
-    def delete(self):
+    def delete(self) -> None:
         with self._get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(f"DROP TABLE IF EXISTS {self.table_name} cascade constraints")

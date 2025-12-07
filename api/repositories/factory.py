@@ -5,7 +5,7 @@ This factory is specifically designed for DifyAPI repositories that handle
 service-layer operations with dependency injection patterns.
 """
 
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from configs import dify_config
 from core.repositories import DifyCoreRepositoryFactory, RepositoryImportError
@@ -25,7 +25,7 @@ class DifyAPIRepositoryFactory(DifyCoreRepositoryFactory):
 
     @classmethod
     def create_api_workflow_node_execution_repository(
-        cls, session_maker: sessionmaker[Session]
+        cls, session_maker: sessionmaker
     ) -> DifyAPIWorkflowNodeExecutionRepository:
         """
         Create a DifyAPIWorkflowNodeExecutionRepository instance based on configuration.
@@ -48,14 +48,14 @@ class DifyAPIRepositoryFactory(DifyCoreRepositoryFactory):
 
         try:
             repository_class = import_string(class_path)
-            return repository_class(session_maker=session_maker)
+            return repository_class(session_maker=session_maker)  # type: ignore[no-any-return]
         except (ImportError, Exception) as e:
             raise RepositoryImportError(
                 f"Failed to create DifyAPIWorkflowNodeExecutionRepository from '{class_path}': {e}"
             ) from e
 
     @classmethod
-    def create_api_workflow_run_repository(cls, session_maker: sessionmaker[Session]) -> APIWorkflowRunRepository:
+    def create_api_workflow_run_repository(cls, session_maker: sessionmaker) -> APIWorkflowRunRepository:
         """
         Create an APIWorkflowRunRepository instance based on configuration.
 
@@ -77,6 +77,6 @@ class DifyAPIRepositoryFactory(DifyCoreRepositoryFactory):
 
         try:
             repository_class = import_string(class_path)
-            return repository_class(session_maker=session_maker)
+            return repository_class(session_maker=session_maker)  # type: ignore[no-any-return]
         except (ImportError, Exception) as e:
             raise RepositoryImportError(f"Failed to create APIWorkflowRunRepository from '{class_path}': {e}") from e

@@ -81,10 +81,6 @@ const translation = {
     },
     addUrl: 'Додати URL-адресу',
     learnMore: 'Дізнатися більше',
-    sort: {
-      uploadTime: 'Час завантаження',
-      hitCount: 'Кількість отримань',
-    },
   },
   metadata: {
     title: 'Метадані',
@@ -102,9 +98,6 @@ const translation = {
       upload_file: 'Завантажити файл',
       notion: 'Синхронізувати з Notion',
       github: 'Синхронізувати з Github',
-      online_document: 'Онлайн-документ',
-      local_file: 'Локальний файл',
-      website_crawl: 'Сканування веб-сайту',
     },
     type: {
       book: 'Книга',
@@ -342,7 +335,6 @@ const translation = {
     pause: 'Пауза',
     parentMaxTokens: 'Родитель',
     hierarchical: 'Батьки-діти',
-    waiting: 'Виконання очікує...',
   },
   segment: {
     paragraphs: 'Параграфи',

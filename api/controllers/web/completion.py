@@ -4,7 +4,7 @@ from flask_restx import reqparse
 from werkzeug.exceptions import InternalServerError, NotFound
 
 import services
-from controllers.web import web_ns
+from controllers.web import api
 from controllers.web.error import (
     AppUnavailableError,
     CompletionRequestError,
@@ -17,6 +17,7 @@ from controllers.web.error import (
 )
 from controllers.web.error import InvokeRateLimitError as InvokeRateLimitHttpError
 from controllers.web.wraps import WebApiResource
+from core.app.apps.base_app_queue_manager import AppQueueManager
 from core.app.entities.app_invoke_entities import InvokeFrom
 from core.errors.error import (
     ModelCurrentlyNotSupportError,
@@ -28,18 +29,16 @@ from libs import helper
 from libs.helper import uuid_value
 from models.model import AppMode
 from services.app_generate_service import AppGenerateService
-from services.app_task_service import AppTaskService
 from services.errors.llm import InvokeRateLimitError
 
 logger = logging.getLogger(__name__)
 
 
 # define completion api for user
-@web_ns.route("/completion-messages")
 class CompletionApi(WebApiResource):
-    @web_ns.doc("Create Completion Message")
-    @web_ns.doc(description="Create a completion message for text generation applications.")
-    @web_ns.doc(
+    @api.doc("Create Completion Message")
+    @api.doc(description="Create a completion message for text generation applications.")
+    @api.doc(
         params={
             "inputs": {"description": "Input variables for the completion", "type": "object", "required": True},
             "query": {"description": "Query text for completion", "type": "string", "required": False},
@@ -53,7 +52,7 @@ class CompletionApi(WebApiResource):
             "retriever_from": {"description": "Source of retriever", "type": "string", "required": False},
         }
     )
-    @web_ns.doc(
+    @api.doc(
         responses={
             200: "Success",
             400: "Bad Request",
@@ -64,17 +63,15 @@ class CompletionApi(WebApiResource):
         }
     )
     def post(self, app_model, end_user):
-        if app_model.mode != AppMode.COMPLETION:
+        if app_model.mode != "completion":
             raise NotCompletionAppError()
 
-        parser = (
-            reqparse.RequestParser()
-            .add_argument("inputs", type=dict, required=True, location="json")
-            .add_argument("query", type=str, location="json", default="")
-            .add_argument("files", type=list, required=False, location="json")
-            .add_argument("response_mode", type=str, choices=["blocking", "streaming"], location="json")
-            .add_argument("retriever_from", type=str, required=False, default="web_app", location="json")
-        )
+        parser = reqparse.RequestParser()
+        parser.add_argument("inputs", type=dict, required=True, location="json")
+        parser.add_argument("query", type=str, location="json", default="")
+        parser.add_argument("files", type=list, required=False, location="json")
+        parser.add_argument("response_mode", type=str, choices=["blocking", "streaming"], location="json")
+        parser.add_argument("retriever_from", type=str, required=False, default="web_app", location="json")
 
         args = parser.parse_args()
 
@@ -109,12 +106,11 @@ class CompletionApi(WebApiResource):
             raise InternalServerError()
 
 
-@web_ns.route("/completion-messages/<string:task_id>/stop")
 class CompletionStopApi(WebApiResource):
-    @web_ns.doc("Stop Completion Message")
-    @web_ns.doc(description="Stop a running completion message task.")
-    @web_ns.doc(params={"task_id": {"description": "Task ID to stop", "type": "string", "required": True}})
-    @web_ns.doc(
+    @api.doc("Stop Completion Message")
+    @api.doc(description="Stop a running completion message task.")
+    @api.doc(params={"task_id": {"description": "Task ID to stop", "type": "string", "required": True}})
+    @api.doc(
         responses={
             200: "Success",
             400: "Bad Request",
@@ -125,24 +121,18 @@ class CompletionStopApi(WebApiResource):
         }
     )
     def post(self, app_model, end_user, task_id):
-        if app_model.mode != AppMode.COMPLETION:
+        if app_model.mode != "completion":
             raise NotCompletionAppError()
 
-        AppTaskService.stop_task(
-            task_id=task_id,
-            invoke_from=InvokeFrom.WEB_APP,
-            user_id=end_user.id,
-            app_mode=AppMode.value_of(app_model.mode),
-        )
+        AppQueueManager.set_stop_flag(task_id, InvokeFrom.WEB_APP, end_user.id)
 
         return {"result": "success"}, 200
 
 
-@web_ns.route("/chat-messages")
 class ChatApi(WebApiResource):
-    @web_ns.doc("Create Chat Message")
-    @web_ns.doc(description="Create a chat message for conversational applications.")
-    @web_ns.doc(
+    @api.doc("Create Chat Message")
+    @api.doc(description="Create a chat message for conversational applications.")
+    @api.doc(
         params={
             "inputs": {"description": "Input variables for the chat", "type": "object", "required": True},
             "query": {"description": "User query/message", "type": "string", "required": True},
@@ -158,7 +148,7 @@ class ChatApi(WebApiResource):
             "retriever_from": {"description": "Source of retriever", "type": "string", "required": False},
         }
     )
-    @web_ns.doc(
+    @api.doc(
         responses={
             200: "Success",
             400: "Bad Request",
@@ -173,16 +163,14 @@ class ChatApi(WebApiResource):
         if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
             raise NotChatAppError()
 
-        parser = (
-            reqparse.RequestParser()
-            .add_argument("inputs", type=dict, required=True, location="json")
-            .add_argument("query", type=str, required=True, location="json")
-            .add_argument("files", type=list, required=False, location="json")
-            .add_argument("response_mode", type=str, choices=["blocking", "streaming"], location="json")
-            .add_argument("conversation_id", type=uuid_value, location="json")
-            .add_argument("parent_message_id", type=uuid_value, required=False, location="json")
-            .add_argument("retriever_from", type=str, required=False, default="web_app", location="json")
-        )
+        parser = reqparse.RequestParser()
+        parser.add_argument("inputs", type=dict, required=True, location="json")
+        parser.add_argument("query", type=str, required=True, location="json")
+        parser.add_argument("files", type=list, required=False, location="json")
+        parser.add_argument("response_mode", type=str, choices=["blocking", "streaming"], location="json")
+        parser.add_argument("conversation_id", type=uuid_value, location="json")
+        parser.add_argument("parent_message_id", type=uuid_value, required=False, location="json")
+        parser.add_argument("retriever_from", type=str, required=False, default="web_app", location="json")
 
         args = parser.parse_args()
 
@@ -219,12 +207,11 @@ class ChatApi(WebApiResource):
             raise InternalServerError()
 
 
-@web_ns.route("/chat-messages/<string:task_id>/stop")
 class ChatStopApi(WebApiResource):
-    @web_ns.doc("Stop Chat Message")
-    @web_ns.doc(description="Stop a running chat message task.")
-    @web_ns.doc(params={"task_id": {"description": "Task ID to stop", "type": "string", "required": True}})
-    @web_ns.doc(
+    @api.doc("Stop Chat Message")
+    @api.doc(description="Stop a running chat message task.")
+    @api.doc(params={"task_id": {"description": "Task ID to stop", "type": "string", "required": True}})
+    @api.doc(
         responses={
             200: "Success",
             400: "Bad Request",
@@ -239,11 +226,12 @@ class ChatStopApi(WebApiResource):
         if app_mode not in {AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT}:
             raise NotChatAppError()
 
-        AppTaskService.stop_task(
-            task_id=task_id,
-            invoke_from=InvokeFrom.WEB_APP,
-            user_id=end_user.id,
-            app_mode=app_mode,
-        )
+        AppQueueManager.set_stop_flag(task_id, InvokeFrom.WEB_APP, end_user.id)
 
         return {"result": "success"}, 200
+
+
+api.add_resource(CompletionApi, "/completion-messages")
+api.add_resource(CompletionStopApi, "/completion-messages/<string:task_id>/stop")
+api.add_resource(ChatApi, "/chat-messages")
+api.add_resource(ChatStopApi, "/chat-messages/<string:task_id>/stop")

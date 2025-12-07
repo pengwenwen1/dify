@@ -19,11 +19,11 @@ import { useWorkflowRun } from '../hooks'
 import type { StartNodeType } from '../nodes/start/types'
 import { TransferMethod } from '../../base/text-generation/types'
 import Button from '@/app/components/base/button'
+import { useFeatures } from '@/app/components/base/features/hooks'
 import {
   getProcessedInputs,
 } from '@/app/components/base/chat/chat/utils'
 import { useCheckInputsForms } from '@/app/components/base/chat/chat/check-input-forms-hooks'
-import { useHooksStore } from '../hooks-store'
 
 type Props = {
   onRun: () => void
@@ -32,8 +32,11 @@ type Props = {
 const InputsPanel = ({ onRun }: Props) => {
   const { t } = useTranslation()
   const workflowStore = useWorkflowStore()
-  const inputs = useStore(s => s.inputs)
-  const fileSettings = useHooksStore(s => s.configsMap?.fileSettings)
+  const { inputs } = useStore(s => ({
+    inputs: s.inputs,
+    setInputs: s.setInputs,
+  }))
+  const fileSettings = useFeatures(s => s.features.file)
   const nodes = useNodes<StartNodeType>()
   const files = useStore(s => s.files)
   const workflowRunningData = useStore(s => s.workflowRunningData)
@@ -49,8 +52,6 @@ const InputsPanel = ({ onRun }: Props) => {
     startVariables.forEach((variable) => {
       if (variable.default)
         initialInputs[variable.variable] = variable.default
-      if (inputs[variable.variable] !== undefined)
-        initialInputs[variable.variable] = inputs[variable.variable]
     })
   }
 

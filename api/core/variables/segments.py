@@ -51,7 +51,7 @@ class Segment(BaseModel):
         """
         return sys.getsizeof(self.value)
 
-    def to_object(self):
+    def to_object(self) -> Any:
         return self.value
 
 
@@ -130,7 +130,7 @@ class ArraySegment(Segment):
     def markdown(self) -> str:
         items = []
         for item in self.value:
-            items.append(f"- {item}")
+            items.append(str(item))
         return "\n".join(items)
 
 

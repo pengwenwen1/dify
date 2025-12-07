@@ -1,19 +1,21 @@
+from typing import Optional
+
 from core.model_manager import ModelInstance
 from core.rag.models.document import Document
 from core.rag.rerank.rerank_base import BaseRerankRunner
 
 
 class RerankModelRunner(BaseRerankRunner):
-    def __init__(self, rerank_model_instance: ModelInstance):
+    def __init__(self, rerank_model_instance: ModelInstance) -> None:
         self.rerank_model_instance = rerank_model_instance
 
     def run(
         self,
         query: str,
         documents: list[Document],
-        score_threshold: float | None = None,
-        top_n: int | None = None,
-        user: str | None = None,
+        score_threshold: Optional[float] = None,
+        top_n: Optional[int] = None,
+        user: Optional[str] = None,
     ) -> list[Document]:
         """
         Run rerank model

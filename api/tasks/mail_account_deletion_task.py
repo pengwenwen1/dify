@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(queue="mail")
-def send_deletion_success_task(to: str, language: str = "en-US"):
+def send_deletion_success_task(to: str, language: str = "en-US") -> None:
     """
     Send account deletion success email with internationalization support.
 
@@ -46,7 +46,7 @@ def send_deletion_success_task(to: str, language: str = "en-US"):
 
 
 @shared_task(queue="mail")
-def send_account_deletion_verification_code(to: str, code: str, language: str = "en-US"):
+def send_account_deletion_verification_code(to: str, code: str, language: str = "en-US") -> None:
     """
     Send account deletion verification code email with internationalization support.
 

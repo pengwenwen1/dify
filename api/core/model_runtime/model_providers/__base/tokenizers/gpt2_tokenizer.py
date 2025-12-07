@@ -1,10 +1,10 @@
 import logging
 from threading import Lock
-from typing import Any
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
-_tokenizer: Any | None = None
+_tokenizer: Optional[Any] = None
 _lock = Lock()
 
 
@@ -15,7 +15,7 @@ class GPT2Tokenizer:
         use gpt2 tokenizer to get num tokens
         """
         _tokenizer = GPT2Tokenizer.get_encoder()
-        tokens = _tokenizer.encode(text)  # type: ignore
+        tokens = _tokenizer.encode(text)
         return len(tokens)
 
     @staticmethod
@@ -28,7 +28,7 @@ class GPT2Tokenizer:
         return GPT2Tokenizer._get_num_tokens_by_gpt2(text)
 
     @staticmethod
-    def get_encoder():
+    def get_encoder() -> Any:
         global _tokenizer, _lock
         if _tokenizer is not None:
             return _tokenizer

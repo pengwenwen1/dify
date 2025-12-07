@@ -1,4 +1,4 @@
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Optional
 
 from pydantic import (
     BaseModel,
@@ -31,6 +31,8 @@ _VALID_PARAMETER_TYPES = frozenset(
 
 
 def _validate_type(parameter_type: str) -> SegmentType:
+    if not isinstance(parameter_type, str):
+        raise TypeError(f"type should be str, got {type(parameter_type)}, value={parameter_type}")
     if parameter_type not in _VALID_PARAMETER_TYPES:
         raise ValueError(f"type {parameter_type} is not allowd to use in Parameter Extractor node.")
 
@@ -48,7 +50,7 @@ class ParameterConfig(BaseModel):
 
     name: str
     type: Annotated[SegmentType, BeforeValidator(_validate_type)]
-    options: list[str] | None = None
+    options: Optional[list[str]] = None
     description: str
     required: bool
 
@@ -86,8 +88,8 @@ class ParameterExtractorNodeData(BaseNodeData):
     model: ModelConfig
     query: list[str]
     parameters: list[ParameterConfig]
-    instruction: str | None = None
-    memory: MemoryConfig | None = None
+    instruction: Optional[str] = None
+    memory: Optional[MemoryConfig] = None
     reasoning_mode: Literal["function_call", "prompt"]
     vision: VisionConfig = Field(default_factory=VisionConfig)
 
@@ -96,7 +98,7 @@ class ParameterExtractorNodeData(BaseNodeData):
     def set_reasoning_mode(cls, v) -> str:
         return v or "function_call"
 
-    def get_parameter_json_schema(self):
+    def get_parameter_json_schema(self) -> dict:
         """
         Get parameter json schema.
 

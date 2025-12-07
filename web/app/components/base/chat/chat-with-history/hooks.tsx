@@ -8,7 +8,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import useSWR from 'swr'
 import { useLocalStorageState } from 'ahooks'
-import { produce } from 'immer'
+import produce from 'immer'
 import type {
   Callback,
   ChatConfig,
@@ -122,31 +122,19 @@ export const useChatWithHistory = (installedAppInfo?: InstalledApp) => {
     setLocaleFromProps()
   }, [appData])
 
-  const [sidebarCollapseState, setSidebarCollapseState] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const localState = localStorage.getItem('webappSidebarCollapse')
-        return localState === 'collapsed'
-      }
-      catch {
-        // localStorage may be disabled in private browsing mode or by security settings
-        // fallback to default value
-        return false
-      }
-    }
-    return false
-  })
+  const [sidebarCollapseState, setSidebarCollapseState] = useState<boolean>(false)
   const handleSidebarCollapse = useCallback((state: boolean) => {
     if (appId) {
       setSidebarCollapseState(state)
-      try {
-        localStorage.setItem('webappSidebarCollapse', state ? 'collapsed' : 'expanded')
-      }
-      catch {
-        // localStorage may be disabled, continue without persisting state
-      }
+      localStorage.setItem('webappSidebarCollapse', state ? 'collapsed' : 'expanded')
     }
   }, [appId, setSidebarCollapseState])
+  useEffect(() => {
+    if (appId) {
+      const localState = localStorage.getItem('webappSidebarCollapse')
+      setSidebarCollapseState(localState === 'collapsed')
+    }
+  }, [appId])
   const [conversationIdInfo, setConversationIdInfo] = useLocalStorageState<Record<string, Record<string, string>>>(CONVERSATION_ID_INFO, {
     defaultValue: {},
   })
@@ -227,7 +215,7 @@ export const useChatWithHistory = (installedAppInfo?: InstalledApp) => {
         }
       }
       if (item.number) {
-        const convertedNumber = Number(initInputs[item.number.variable])
+        const convertedNumber = Number(initInputs[item.number.variable]) ?? undefined
         return {
           ...item.number,
           default: convertedNumber || item.default || item.number.default,
@@ -235,15 +223,13 @@ export const useChatWithHistory = (installedAppInfo?: InstalledApp) => {
         }
       }
 
-      if (item.checkbox) {
-        const preset = initInputs[item.checkbox.variable] === true
+      if(item.checkbox) {
         return {
           ...item.checkbox,
-          default: preset || item.default || item.checkbox.default,
+          default: false,
           type: 'checkbox',
         }
       }
-
       if (item.select) {
         const isInputInOptions = item.select.options.includes(initInputs[item.select.variable])
         return {

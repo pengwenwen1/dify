@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from sqlalchemy import select
 
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 class AnnotationReplyFeature:
     def query(
         self, app_record: App, message: Message, query: str, user_id: str, invoke_from: InvokeFrom
-    ) -> MessageAnnotation | None:
+    ) -> Optional[MessageAnnotation]:
         """
         Query app annotations to reply
         :param app_record: app record
@@ -33,9 +34,6 @@ class AnnotationReplyFeature:
             return None
 
         collection_binding_detail = annotation_setting.collection_binding_detail
-
-        if not collection_binding_detail:
-            return None
 
         try:
             score_threshold = annotation_setting.score_threshold or 1

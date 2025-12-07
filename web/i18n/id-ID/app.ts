@@ -68,9 +68,6 @@ const translation = {
     hideTemplates: 'Kembali ke pemilihan mode',
     useTemplate: 'Gunakan template ini',
     appCreateDSLErrorPart2: 'Apakah Anda ingin melanjutkan?',
-    import: 'Mengimpor',
-    foundResult: 'Hasil {{count}}',
-    foundResults: 'Hasil {{count}}',
   },
   newAppFromTemplate: {
     sidebar: {
@@ -144,17 +141,6 @@ const translation = {
       removeConfirmContent: 'Konfigurasi saat ini sedang digunakan, menghapusnya akan mematikan fitur Pelacakan.',
       title: 'Konfigurasi',
       secretKey: 'Kunci Rahasia',
-      experimentId: 'ID Eksperimen',
-      trackingUri: 'URI Pelacakan',
-      clientId: 'ID Klien OAuth',
-      clientSecret: 'Rahasia Klien OAuth',
-      username: 'Nama Pengguna',
-      databricksHost: 'URL Workspace Databricks',
-      personalAccessToken: 'Token Akses Pribadi (lama)',
-      password: 'Kata sandi',
-      placeholder: 'Masukkan {{key}} Anda',
-      viewDocsLink: 'Lihat dokumen {{key}}',
-      removeConfirmTitle: 'Hapus konfigurasi {{key}}?',
     },
     expand: 'Memperluas',
     disabledTip: 'Silakan konfigurasi penyedia terlebih dahulu',
@@ -168,18 +154,6 @@ const translation = {
     description: 'Mengonfigurasi penyedia LLMOps Pihak Ketiga dan melacak performa aplikasi.',
     inUse: 'Sedang digunakan',
     tracingDescription: 'Tangkap konteks lengkap eksekusi aplikasi, termasuk panggilan LLM, konteks, perintah, permintaan HTTP, dan lainnya, ke platform pelacakan pihak ketiga.',
-    tencent: {
-      title: 'Tencent APM',
-      description: 'Tencent Application Performance Monitoring menyediakan pelacakan komprehensif dan analisis multi-dimensi untuk aplikasi LLM.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'MLflow adalah platform sumber terbuka untuk manajemen eksperimen, evaluasi, dan pemantauan aplikasi LLM.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks menawarkan MLflow yang sepenuhnya dikelola dengan tata kelola dan keamanan yang kuat untuk menyimpan data jejak.',
-    },
   },
   appSelector: {
     placeholder: 'Pilih aplikasi...',
@@ -223,10 +197,6 @@ const translation = {
     description: 'Menetapkan izin akses aplikasi web',
     title: 'Kontrol Akses Aplikasi Web',
     accessLabel: 'Siapa yang memiliki akses',
-    groups_one: 'GRUP {{count}}',
-    groups_other: '{{count}} KELOMPOK',
-    members_one: '{{count}} ANGGOTA',
-    members_other: '{{count}} ANGGOTA',
   },
   publishApp: {
     notSetDesc: 'Saat ini tidak ada yang dapat mengakses aplikasi web. Silakan atur izin.',
@@ -262,8 +232,6 @@ const translation = {
       searchKnowledgeBasesDesc: 'Cari dan navigasikan ke basis pengetahuan Anda',
       themeSystem: 'Tema Sistem',
       languageChangeDesc: 'Mengubah bahasa UI',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noWorkflowNodesFound: 'Tidak ada simpul alur kerja yang ditemukan',
@@ -271,7 +239,6 @@ const translation = {
       noPluginsFound: 'Tidak ada plugin yang ditemukan',
       noKnowledgeBasesFound: 'Tidak ada basis pengetahuan yang ditemukan',
       tryDifferentTerm: 'Coba istilah penelusuran lain',
-      trySpecificSearch: 'Coba {{shortcuts}} untuk pencarian spesifik',
     },
     groups: {
       apps: 'Apps',
@@ -296,13 +263,6 @@ const translation = {
     tryDifferentSearch: 'Coba istilah penelusuran lain',
     noMatchingCommands: 'Tidak ada perintah yang cocok ditemukan',
     searchFailed: 'Pencarian gagal',
-    tips: 'Tekan ↑↓ untuk menavigasi',
-    startTyping: 'Mulai mengetik untuk mencari',
-    selectToNavigate: 'Pilih untuk menavigasi',
-    pressEscToClose: 'Tekan ESC untuk menutup',
-    resultCount: 'hasil {{count}}',
-    resultCount_other: 'hasil {{count}}',
-    inScope: 'di {{scope}}s',
   },
   createApp: 'BUAT APLIKASI',
   accessControl: 'Kontrol Akses Aplikasi Web',
@@ -340,8 +300,6 @@ const translation = {
   openInExplore: 'Buka di Jelajahi',
   showMyCreatedAppsOnly: 'Dibuat oleh saya',
   appDeleteFailed: 'Gagal menghapus aplikasi',
-  noUserInputNode: 'Node input pengguna hilang',
-  notPublishedYet: 'Aplikasi belum diterbitkan',
 }
 
 export default translation

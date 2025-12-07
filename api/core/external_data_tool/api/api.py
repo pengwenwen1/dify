@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import select
 
 from core.extension.api_based_extension_requestor import APIBasedExtensionRequestor
@@ -16,7 +18,7 @@ class ApiExternalDataTool(ExternalDataTool):
     """the unique name of external data tool"""
 
     @classmethod
-    def validate_config(cls, tenant_id: str, config: dict):
+    def validate_config(cls, tenant_id: str, config: dict) -> None:
         """
         Validate the incoming form config data.
 
@@ -37,7 +39,7 @@ class ApiExternalDataTool(ExternalDataTool):
         if not api_based_extension:
             raise ValueError("api_based_extension_id is invalid")
 
-    def query(self, inputs: dict, query: str | None = None) -> str:
+    def query(self, inputs: dict, query: Optional[str] = None) -> str:
         """
         Query the external data tool.
 

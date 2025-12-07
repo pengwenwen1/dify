@@ -28,8 +28,7 @@ const CSVUploader: FC<Props> = ({
   const handleDragEnter = (e: DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    if (e.target !== dragRef.current)
-      setDragging(true)
+    e.target !== dragRef.current && setDragging(true)
   }
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault()
@@ -38,8 +37,7 @@ const CSVUploader: FC<Props> = ({
   const handleDragLeave = (e: DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    if (e.target === dragRef.current)
-      setDragging(false)
+    e.target === dragRef.current && setDragging(false)
   }
   const handleDrop = (e: DragEvent) => {
     e.preventDefault()

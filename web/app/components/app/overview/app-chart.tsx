@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import React from 'react'
 import ReactECharts from 'echarts-for-react'
 import type { EChartsOption } from 'echarts'
-import type { Dayjs } from 'dayjs'
+import useSWR from 'swr'
 import dayjs from 'dayjs'
 import { get } from 'lodash-es'
 import Decimal from 'decimal.js'
@@ -12,20 +12,7 @@ import { formatNumber } from '@/utils/format'
 import Basic from '@/app/components/app-sidebar/basic'
 import Loading from '@/app/components/base/loading'
 import type { AppDailyConversationsResponse, AppDailyEndUsersResponse, AppDailyMessagesResponse, AppTokenCostsResponse } from '@/models/app'
-import {
-  useAppAverageResponseTime,
-  useAppAverageSessionInteractions,
-  useAppDailyConversations,
-  useAppDailyEndUsers,
-  useAppDailyMessages,
-  useAppSatisfactionRate,
-  useAppTokenCosts,
-  useAppTokensPerSecond,
-  useWorkflowAverageInteractions,
-  useWorkflowDailyConversations,
-  useWorkflowDailyTerminals,
-  useWorkflowTokenCosts,
-} from '@/service/use-apps'
+import { getAppDailyConversations, getAppDailyEndUsers, getAppDailyMessages, getAppStatistics, getAppTokenCosts, getWorkflowDailyConversations } from '@/service/apps'
 const valueFormatter = (v: string | number) => v
 
 const COLOR_TYPE_MAP = {
@@ -91,16 +78,6 @@ export type PeriodParams = {
   }
 }
 
-export type TimeRange = {
-  start: Dayjs
-  end: Dayjs
-}
-
-export type PeriodParamsWithTimeRange = {
-  name: string
-  query?: TimeRange
-}
-
 export type IBizChartProps = {
   period: PeriodParams
   id: string
@@ -130,8 +107,7 @@ const Chart: React.FC<IChartProps> = ({
   const { t } = useTranslation()
   const statistics = chartData.data
   const statisticsLen = statistics.length
-  const markLineLength = statisticsLen >= 2 ? statisticsLen - 2 : statisticsLen
-  const extraDataForMarkLine = Array.from({ length: markLineLength }, () => '1')
+  const extraDataForMarkLine = new Array(statisticsLen >= 2 ? statisticsLen - 2 : statisticsLen).fill('1')
   extraDataForMarkLine.push('')
   extraDataForMarkLine.unshift('')
 
@@ -238,7 +214,9 @@ const Chart: React.FC<IChartProps> = ({
           formatter(params) {
             return `<div style='color:#6B7280;font-size:12px'>${params.name}</div>
                           <div style='font-size:14px;color:#1F2A37'>${valueFormatter((params.data as any)[yField])}
-                              ${!CHART_TYPE_CONFIG[chartType].showTokens ? '' : `<span style='font-size:12px'>
+                              ${!CHART_TYPE_CONFIG[chartType].showTokens
+                                ? ''
+                                : `<span style='font-size:12px'>
                                   <span style='margin-left:4px;color:#6B7280'>(</span>
                                   <span style='color:#FF8A4C'>~$${get(params.data, 'total_price', 0)}</span>
                                   <span style='color:#6B7280'>)</span>
@@ -284,8 +262,8 @@ const getDefaultChartData = ({ start, end, key = 'count' }: { start: string; end
 
 export const MessagesChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppDailyMessages(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/daily-messages`, params: period.query }, getAppDailyMessages)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -298,8 +276,8 @@ export const MessagesChart: FC<IBizChartProps> = ({ id, period }) => {
 
 export const ConversationsChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppDailyConversations(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/daily-conversations`, params: period.query }, getAppDailyConversations)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -313,8 +291,8 @@ export const ConversationsChart: FC<IBizChartProps> = ({ id, period }) => {
 export const EndUsersChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
 
-  const { data: response, isLoading } = useAppDailyEndUsers(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/daily-end-users`, id, params: period.query }, getAppDailyEndUsers)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -327,8 +305,8 @@ export const EndUsersChart: FC<IBizChartProps> = ({ id, period }) => {
 
 export const AvgSessionInteractions: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppAverageSessionInteractions(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/average-session-interactions`, params: period.query }, getAppStatistics)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -343,8 +321,8 @@ export const AvgSessionInteractions: FC<IBizChartProps> = ({ id, period }) => {
 
 export const AvgResponseTime: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppAverageResponseTime(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/average-response-time`, params: period.query }, getAppStatistics)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -360,8 +338,8 @@ export const AvgResponseTime: FC<IBizChartProps> = ({ id, period }) => {
 
 export const TokenPerSecond: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppTokensPerSecond(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/tokens-per-second`, params: period.query }, getAppStatistics)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -378,8 +356,8 @@ export const TokenPerSecond: FC<IBizChartProps> = ({ id, period }) => {
 
 export const UserSatisfactionRate: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useAppSatisfactionRate(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/user-satisfaction-rate`, params: period.query }, getAppStatistics)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -396,8 +374,8 @@ export const UserSatisfactionRate: FC<IBizChartProps> = ({ id, period }) => {
 export const CostChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
 
-  const { data: response, isLoading } = useAppTokenCosts(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/statistics/token-costs`, params: period.query }, getAppTokenCosts)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -410,8 +388,8 @@ export const CostChart: FC<IBizChartProps> = ({ id, period }) => {
 
 export const WorkflowMessagesChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useWorkflowDailyConversations(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/workflow/statistics/daily-conversations`, params: period.query }, getWorkflowDailyConversations)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -426,8 +404,8 @@ export const WorkflowMessagesChart: FC<IBizChartProps> = ({ id, period }) => {
 export const WorkflowDailyTerminalsChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
 
-  const { data: response, isLoading } = useWorkflowDailyTerminals(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/workflow/statistics/daily-terminals`, id, params: period.query }, getAppDailyEndUsers)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -441,8 +419,8 @@ export const WorkflowDailyTerminalsChart: FC<IBizChartProps> = ({ id, period }) 
 export const WorkflowCostChart: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
 
-  const { data: response, isLoading } = useWorkflowTokenCosts(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/workflow/statistics/token-costs`, params: period.query }, getAppTokenCosts)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart
@@ -455,8 +433,8 @@ export const WorkflowCostChart: FC<IBizChartProps> = ({ id, period }) => {
 
 export const AvgUserInteractions: FC<IBizChartProps> = ({ id, period }) => {
   const { t } = useTranslation()
-  const { data: response, isLoading } = useWorkflowAverageInteractions(id, period.query)
-  if (isLoading || !response)
+  const { data: response } = useSWR({ url: `/apps/${id}/workflow/statistics/average-app-interactions`, params: period.query }, getAppStatistics)
+  if (!response)
     return <Loading />
   const noDataFlag = !response.data || response.data.length === 0
   return <Chart

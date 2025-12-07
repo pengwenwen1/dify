@@ -82,10 +82,6 @@ const translation = {
     },
     addUrl: 'Dodaj adres URL',
     learnMore: 'Dowiedz się więcej',
-    sort: {
-      uploadTime: 'Czas przesyłania',
-      hitCount: 'Liczba wyszukiwań',
-    },
   },
   metadata: {
     title: 'Metadane',
@@ -104,9 +100,6 @@ const translation = {
       upload_file: 'Wgraj plik',
       notion: 'Synchronizuj z Notion',
       github: 'Synchronizuj z Github',
-      online_document: 'Dokument online',
-      local_file: 'Plik lokalny',
-      website_crawl: 'Indeksowanie witryny',
     },
     type: {
       book: 'Książka',
@@ -344,7 +337,6 @@ const translation = {
     hierarchical: 'Rodzic-dziecko',
     childMaxTokens: 'Dziecko',
     pause: 'Pauza',
-    waiting: 'Oczekiwanie na osadzenie...',
   },
   segment: {
     paragraphs: 'Akapity',

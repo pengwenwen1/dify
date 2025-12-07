@@ -42,7 +42,6 @@ type Props = {
   headerClassName?: string
   instanceId?: string
   nodeId?: string
-  editorId?: string
   title: string | React.JSX.Element
   value: string
   onChange: (value: string) => void
@@ -86,7 +85,6 @@ const Editor: FC<Props> = ({
   headerClassName,
   instanceId,
   nodeId,
-  editorId,
   title,
   value,
   onChange,
@@ -150,8 +148,6 @@ const Editor: FC<Props> = ({
   }
 
   const getVarType = useWorkflowVariableType()
-  const pipelineId = useStore(s => s.pipelineId)
-  const setShowInputFieldPanel = useStore(s => s.setShowInputFieldPanel)
 
   return (
     <Wrap className={cn(className, wrapClassName)} style={wrapStyle} isInNode isExpand={isExpand}>
@@ -167,7 +163,6 @@ const Editor: FC<Props> = ({
               {isSupportPromptGenerator && (
                 <PromptGeneratorBtn
                   nodeId={nodeId!}
-                  editorId={editorId}
                   className='ml-[5px]'
                   onGenerated={onGenerated}
                   modelConfig={modelConfig}
@@ -266,7 +261,7 @@ const Editor: FC<Props> = ({
                     workflowVariableBlock={{
                       show: true,
                       variables: nodesOutputVars || [],
-                      getVarType: getVarType as any,
+                      getVarType,
                       workflowNodesMap: availableNodes.reduce((acc, node) => {
                         acc[node.id] = {
                           title: node.data.title,
@@ -283,8 +278,6 @@ const Editor: FC<Props> = ({
                         }
                         return acc
                       }, {} as any),
-                      showManageInputField: !!pipelineId,
-                      onManageInputField: () => setShowInputFieldPanel?.(true),
                     }}
                     onChange={onChange}
                     onBlur={setBlur}

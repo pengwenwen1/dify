@@ -18,10 +18,6 @@ const translation = {
     cancel: 'Cancel',
     clear: 'Clear',
     save: 'Save',
-    yes: 'Yes',
-    no: 'No',
-    deleteConfirmTitle: 'Delete?',
-    confirmAction: 'Please confirm your action.',
     saveAndEnable: 'Save & Enable',
     edit: 'Edit',
     add: 'Add',
@@ -29,11 +25,6 @@ const translation = {
     refresh: 'Restart',
     reset: 'Reset',
     search: 'Search',
-    noSearchResults: 'No {{content}} were found',
-    resetKeywords: 'Reset keywords',
-    selectCount: '{{count}} Selected',
-    searchCount: 'Find {{count}} {{content}}',
-    noSearchCount: '0 {{content}}',
     change: 'Change',
     remove: 'Remove',
     send: 'Send',
@@ -46,7 +37,6 @@ const translation = {
     downloadFailed: 'Download failed. Please try again later.',
     viewDetails: 'View Details',
     delete: 'Delete',
-    now: 'Now',
     deleteApp: 'Delete App',
     settings: 'Settings',
     setup: 'Setup',
@@ -85,11 +75,6 @@ const translation = {
   placeholder: {
     input: 'Please enter',
     select: 'Please select',
-    search: 'Search...',
-  },
-  noData: 'No data',
-  label: {
-    optional: '(optional)',
   },
   voice: {
     language: {
@@ -178,14 +163,13 @@ const translation = {
   },
   userProfile: {
     settings: 'Settings',
-    contactUs: 'Contact Us',
     emailSupport: 'Email Support',
     workspace: 'Workspace',
     createWorkspace: 'Create Workspace',
-    helpCenter: 'View Docs',
+    helpCenter: 'Docs',
     support: 'Support',
     compliance: 'Compliance',
-    forum: 'Forum',
+    communityFeedback: 'Feedback',
     roadmap: 'Roadmap',
     github: 'GitHub',
     community: 'Community',
@@ -506,7 +490,6 @@ const translation = {
     toBeConfigured: 'To be configured',
     configureTip: 'Set up api-key or add model to use',
     installProvider: 'Install model providers',
-    installDataSourceProvider: 'Install data source providers',
     discoverMore: 'Discover more in ',
     emptyProviderTitle: 'Model provider not set up',
     emptyProviderTip: 'Please install a model provider first.',
@@ -541,7 +524,6 @@ const translation = {
       selectModelCredential: 'Select a model credential',
       customModelCredentialsDeleteTip: 'Credential is in use and cannot be deleted',
     },
-    parametersInvalidRemoved: 'Some parameters are invalid and have been removed',
   },
   dataSource: {
     add: 'Add a data source',
@@ -640,7 +622,6 @@ const translation = {
     viewDoc: 'View documentation',
     relatedApp: 'linked apps',
     noRelatedApp: 'No linked apps',
-    pipeline: 'Pipeline',
   },
   voiceInput: {
     speaking: 'Speak now...',
@@ -742,7 +723,6 @@ const translation = {
     uploadFromComputerLimit: 'Upload {{type}} cannot exceed {{size}}',
     pasteFileLinkInvalid: 'Invalid file link',
     fileExtensionNotSupport: 'File extension not supported',
-    fileExtensionBlocked: 'This file type is blocked for security reasons',
   },
   tag: {
     placeholder: 'All Tags',
@@ -777,12 +757,6 @@ const translation = {
     supportedFormats: 'Supports PNG, JPG, JPEG, WEBP and GIF',
   },
   you: 'You',
-  dynamicSelect: {
-    error: 'Loading options failed',
-    noData: 'No options available',
-    loading: 'Loading options...',
-    selected: '{{count}} selected',
-  },
 }
 
 export default translation

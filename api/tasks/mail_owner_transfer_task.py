@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(queue="mail")
-def send_owner_transfer_confirm_task(language: str, to: str, code: str, workspace: str):
+def send_owner_transfer_confirm_task(language: str, to: str, code: str, workspace: str) -> None:
     """
     Send owner transfer confirmation email with internationalization support.
 
@@ -52,7 +52,7 @@ def send_owner_transfer_confirm_task(language: str, to: str, code: str, workspac
 
 
 @shared_task(queue="mail")
-def send_old_owner_transfer_notify_email_task(language: str, to: str, workspace: str, new_owner_email: str):
+def send_old_owner_transfer_notify_email_task(language: str, to: str, workspace: str, new_owner_email: str) -> None:
     """
     Send old owner transfer notification email with internationalization support.
 
@@ -93,7 +93,7 @@ def send_old_owner_transfer_notify_email_task(language: str, to: str, workspace:
 
 
 @shared_task(queue="mail")
-def send_new_owner_transfer_notify_email_task(language: str, to: str, workspace: str):
+def send_new_owner_transfer_notify_email_task(language: str, to: str, workspace: str) -> None:
     """
     Send new owner transfer notification email with internationalization support.
 

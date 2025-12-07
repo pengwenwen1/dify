@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import Field, NonNegativeInt, PositiveFloat, PositiveInt
 from pydantic_settings import BaseSettings
 
@@ -17,12 +19,12 @@ class RedisConfig(BaseSettings):
         default=6379,
     )
 
-    REDIS_USERNAME: str | None = Field(
+    REDIS_USERNAME: Optional[str] = Field(
         description="Username for Redis authentication (if required)",
         default=None,
     )
 
-    REDIS_PASSWORD: str | None = Field(
+    REDIS_PASSWORD: Optional[str] = Field(
         description="Password for Redis authentication (if required)",
         default=None,
     )
@@ -42,47 +44,47 @@ class RedisConfig(BaseSettings):
         default="CERT_NONE",
     )
 
-    REDIS_SSL_CA_CERTS: str | None = Field(
+    REDIS_SSL_CA_CERTS: Optional[str] = Field(
         description="Path to the CA certificate file for SSL verification",
         default=None,
     )
 
-    REDIS_SSL_CERTFILE: str | None = Field(
+    REDIS_SSL_CERTFILE: Optional[str] = Field(
         description="Path to the client certificate file for SSL authentication",
         default=None,
     )
 
-    REDIS_SSL_KEYFILE: str | None = Field(
+    REDIS_SSL_KEYFILE: Optional[str] = Field(
         description="Path to the client private key file for SSL authentication",
         default=None,
     )
 
-    REDIS_USE_SENTINEL: bool | None = Field(
+    REDIS_USE_SENTINEL: Optional[bool] = Field(
         description="Enable Redis Sentinel mode for high availability",
         default=False,
     )
 
-    REDIS_SENTINELS: str | None = Field(
+    REDIS_SENTINELS: Optional[str] = Field(
         description="Comma-separated list of Redis Sentinel nodes (host:port)",
         default=None,
     )
 
-    REDIS_SENTINEL_SERVICE_NAME: str | None = Field(
+    REDIS_SENTINEL_SERVICE_NAME: Optional[str] = Field(
         description="Name of the Redis Sentinel service to monitor",
         default=None,
     )
 
-    REDIS_SENTINEL_USERNAME: str | None = Field(
+    REDIS_SENTINEL_USERNAME: Optional[str] = Field(
         description="Username for Redis Sentinel authentication (if required)",
         default=None,
     )
 
-    REDIS_SENTINEL_PASSWORD: str | None = Field(
+    REDIS_SENTINEL_PASSWORD: Optional[str] = Field(
         description="Password for Redis Sentinel authentication (if required)",
         default=None,
     )
 
-    REDIS_SENTINEL_SOCKET_TIMEOUT: PositiveFloat | None = Field(
+    REDIS_SENTINEL_SOCKET_TIMEOUT: Optional[PositiveFloat] = Field(
         description="Socket timeout in seconds for Redis Sentinel connections",
         default=0.1,
     )
@@ -92,12 +94,12 @@ class RedisConfig(BaseSettings):
         default=False,
     )
 
-    REDIS_CLUSTERS: str | None = Field(
+    REDIS_CLUSTERS: Optional[str] = Field(
         description="Comma-separated list of Redis Clusters nodes (host:port)",
         default=None,
     )
 
-    REDIS_CLUSTERS_PASSWORD: str | None = Field(
+    REDIS_CLUSTERS_PASSWORD: Optional[str] = Field(
         description="Password for Redis Clusters authentication (if required)",
         default=None,
     )

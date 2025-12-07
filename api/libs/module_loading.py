@@ -7,9 +7,10 @@ https://github.com/django/django/blob/main/django/utils/module_loading.py
 
 import sys
 from importlib import import_module
+from typing import Any
 
 
-def cached_import(module_path: str, class_name: str):
+def cached_import(module_path: str, class_name: str) -> Any:
     """
     Import a module and return the named attribute/class from it, with caching.
 
@@ -29,7 +30,7 @@ def cached_import(module_path: str, class_name: str):
     return getattr(module, class_name)
 
 
-def import_string(dotted_path: str):
+def import_string(dotted_path: str) -> Any:
     """
     Import a dotted module path and return the attribute/class designated by
     the last name in the path. Raise ImportError if the import failed.

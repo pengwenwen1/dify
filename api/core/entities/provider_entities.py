@@ -1,5 +1,5 @@
-from enum import StrEnum, auto
-from typing import Union
+from enum import Enum
+from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -13,14 +13,14 @@ from core.model_runtime.entities.model_entities import ModelType
 from core.tools.entities.common_entities import I18nObject
 
 
-class ProviderQuotaType(StrEnum):
-    PAID = auto()
+class ProviderQuotaType(Enum):
+    PAID = "paid"
     """hosted paid quota"""
 
-    FREE = auto()
+    FREE = "free"
     """third-party free quota"""
 
-    TRIAL = auto()
+    TRIAL = "trial"
     """hosted trial quota"""
 
     @staticmethod
@@ -31,25 +31,25 @@ class ProviderQuotaType(StrEnum):
         raise ValueError(f"No matching enum found for value '{value}'")
 
 
-class QuotaUnit(StrEnum):
-    TIMES = auto()
-    TOKENS = auto()
-    CREDITS = auto()
+class QuotaUnit(Enum):
+    TIMES = "times"
+    TOKENS = "tokens"
+    CREDITS = "credits"
 
 
-class SystemConfigurationStatus(StrEnum):
+class SystemConfigurationStatus(Enum):
     """
     Enum class for system configuration status.
     """
 
-    ACTIVE = auto()
+    ACTIVE = "active"
     QUOTA_EXCEEDED = "quota-exceeded"
-    UNSUPPORTED = auto()
+    UNSUPPORTED = "unsupported"
 
 
 class RestrictModel(BaseModel):
     model: str
-    base_model_name: str | None = None
+    base_model_name: Optional[str] = None
     model_type: ModelType
 
     # pydantic configs
@@ -84,9 +84,9 @@ class SystemConfiguration(BaseModel):
     """
 
     enabled: bool
-    current_quota_type: ProviderQuotaType | None = None
+    current_quota_type: Optional[ProviderQuotaType] = None
     quota_configurations: list[QuotaConfiguration] = []
-    credentials: dict | None = None
+    credentials: Optional[dict] = None
 
 
 class CustomProviderConfiguration(BaseModel):
@@ -95,8 +95,8 @@ class CustomProviderConfiguration(BaseModel):
     """
 
     credentials: dict
-    current_credential_id: str | None = None
-    current_credential_name: str | None = None
+    current_credential_id: Optional[str] = None
+    current_credential_name: Optional[str] = None
     available_credentials: list[CredentialConfiguration] = []
 
 
@@ -108,10 +108,10 @@ class CustomModelConfiguration(BaseModel):
     model: str
     model_type: ModelType
     credentials: dict | None
-    current_credential_id: str | None = None
-    current_credential_name: str | None = None
+    current_credential_id: Optional[str] = None
+    current_credential_name: Optional[str] = None
     available_model_credentials: list[CredentialConfiguration] = []
-    unadded_to_model_list: bool | None = False
+    unadded_to_model_list: Optional[bool] = False
 
     # pydantic configs
     model_config = ConfigDict(protected_namespaces=())
@@ -131,7 +131,7 @@ class CustomConfiguration(BaseModel):
     Model class for provider custom configuration.
     """
 
-    provider: CustomProviderConfiguration | None = None
+    provider: Optional[CustomProviderConfiguration] = None
     models: list[CustomModelConfiguration] = []
     can_added_models: list[UnaddedModelConfiguration] = []
 
@@ -145,7 +145,6 @@ class ModelLoadBalancingConfiguration(BaseModel):
     name: str
     credentials: dict
     credential_source_type: str | None = None
-    credential_id: str | None = None
 
 
 class ModelSettings(BaseModel):
@@ -168,14 +167,14 @@ class BasicProviderConfig(BaseModel):
     Base model class for common provider settings like credentials
     """
 
-    class Type(StrEnum):
-        SECRET_INPUT = CommonParameterType.SECRET_INPUT
-        TEXT_INPUT = CommonParameterType.TEXT_INPUT
-        SELECT = CommonParameterType.SELECT
-        BOOLEAN = CommonParameterType.BOOLEAN
-        APP_SELECTOR = CommonParameterType.APP_SELECTOR
-        MODEL_SELECTOR = CommonParameterType.MODEL_SELECTOR
-        TOOLS_SELECTOR = CommonParameterType.TOOLS_SELECTOR
+    class Type(Enum):
+        SECRET_INPUT = CommonParameterType.SECRET_INPUT.value
+        TEXT_INPUT = CommonParameterType.TEXT_INPUT.value
+        SELECT = CommonParameterType.SELECT.value
+        BOOLEAN = CommonParameterType.BOOLEAN.value
+        APP_SELECTOR = CommonParameterType.APP_SELECTOR.value
+        MODEL_SELECTOR = CommonParameterType.MODEL_SELECTOR.value
+        TOOLS_SELECTOR = CommonParameterType.TOOLS_SELECTOR.value
 
         @classmethod
         def value_of(cls, value: str) -> "ProviderConfig.Type":
@@ -205,13 +204,12 @@ class ProviderConfig(BasicProviderConfig):
 
     scope: AppSelectorScope | ModelSelectorScope | ToolSelectorScope | None = None
     required: bool = False
-    default: Union[int, str, float, bool] | None = None
-    options: list[Option] | None = None
-    multiple: bool | None = False
-    label: I18nObject | None = None
-    help: I18nObject | None = None
-    url: str | None = None
-    placeholder: I18nObject | None = None
+    default: Optional[Union[int, str, float, bool]] = None
+    options: Optional[list[Option]] = None
+    label: Optional[I18nObject] = None
+    help: Optional[I18nObject] = None
+    url: Optional[str] = None
+    placeholder: Optional[I18nObject] = None
 
     def to_basic_provider_config(self) -> BasicProviderConfig:
         return BasicProviderConfig(type=self.type, name=self.name)

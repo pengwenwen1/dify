@@ -88,7 +88,6 @@ const translation = {
     advancedShortDescription: 'گردش‌کار پیشرفته برای گفتگوهای چند مرحله‌ای',
     agentUserDescription: 'یک عامل هوشمند که قادر به استدلال تکراری و استفاده از ابزار مستقل برای دستیابی به اهداف وظیفه است.',
     dropDSLToCreateApp: 'فایل DSL را اینجا رها کنید تا برنامه ساخته شود',
-    import: 'واردات',
   },
   editApp: 'ویرایش اطلاعات',
   editAppTitle: 'ویرایش اطلاعات برنامه',
@@ -157,14 +156,6 @@ const translation = {
       viewDocsLink: 'مشاهده مستندات {{key}}',
       removeConfirmTitle: 'حذف پیکربندی {{key}}؟',
       removeConfirmContent: 'پیکربندی فعلی در حال استفاده است، حذف آن ویژگی ردیابی را غیرفعال خواهد کرد.',
-      clientId: 'شناسه مشتری OAuth',
-      username: 'نام کاربری',
-      password: 'رمز عبور',
-      experimentId: 'شناسه آزمایش',
-      personalAccessToken: 'نشانه دسترسی شخصی (قدیمی)',
-      databricksHost: 'نشانی اینترنتی محیط کاری دیتابریکس',
-      trackingUri: 'آدرس URI ردیابی',
-      clientSecret: 'رمز مخفی مشتری OAuth',
     },
     view: 'مشاهده',
     opik: {
@@ -178,18 +169,6 @@ const translation = {
     aliyun: {
       title: 'نظارت بر ابر',
       description: 'پلتفرم مشاهده‌پذیری کاملاً مدیریت‌شده و بدون نیاز به نگهداری که توسط Alibaba Cloud ارائه شده، امکان نظارت، ردیابی و ارزیابی برنامه‌های Dify را به‌صورت آماده و با تنظیمات اولیه فراهم می‌کند.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'پلتفرم LLMOps متن‌باز برای ردیابی آزمایش‌ها، مشاهده‌پذیری و ارزیابی، برای ساخت برنامه‌های AI/LLM با اطمینان.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks MLflow کاملاً مدیریت‌شده با حکمرانی و امنیت قوی برای ذخیره‌سازی داده‌های ردیابی ارائه می‌دهد.',
-    },
-    tencent: {
-      title: 'تنست ای‌پی‌ام',
-      description: 'نظارت بر عملکرد برنامه‌های Tencent تحلیل‌های جامع و ردیابی چندبعدی برای برنامه‌های LLM ارائه می‌دهد.',
     },
   },
   answerIcon: {
@@ -302,8 +281,6 @@ const translation = {
       accountDesc: 'به صفحه حساب کاربری بروید',
       communityDesc: 'جامعه دیسکورد باز',
       docDesc: 'مستندات کمک را باز کنید',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noKnowledgeBasesFound: 'هیچ پایگاه دانش یافت نشد',
@@ -339,13 +316,7 @@ const translation = {
     noMatchingCommands: 'هیچ دستوری منطبق یافت نشد',
     tryDifferentSearch: 'عبارت جستجوی دیگری را امتحان کنید',
     slashHint: 'برای مشاهده تمام دستورات موجود / را تایپ کنید',
-    startTyping: 'برای جستجو شروع به تایپ کنید',
-    selectToNavigate: 'انتخاب کنید تا برای حرکت',
-    pressEscToClose: 'برای بستن ESC را فشار دهید',
-    tips: 'برای حرکت به بالا و پایین کلیدهای ↑ و ↓ را فشار دهید',
   },
-  noUserInputNode: 'ورودی کاربر پیدا نشد',
-  notPublishedYet: 'اپ هنوز منتشر نشده است',
 }
 
 export default translation

@@ -1,7 +1,7 @@
 import json
 import logging
 import math
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 from tcvdb_text.encoder import BM25Encoder  # type: ignore
@@ -24,10 +24,10 @@ logger = logging.getLogger(__name__)
 
 class TencentConfig(BaseModel):
     url: str
-    api_key: str | None = None
+    api_key: Optional[str]
     timeout: float = 30
-    username: str | None = None
-    database: str | None = None
+    username: Optional[str]
+    database: Optional[str]
     index_type: str = "HNSW"
     metric_type: str = "IP"
     shard: int = 1
@@ -82,7 +82,7 @@ class TencentVector(BaseVector):
     def get_type(self) -> str:
         return VectorType.TENCENT
 
-    def to_index_struct(self):
+    def to_index_struct(self) -> dict:
         return {"type": self.get_type(), "vector_store": {"class_prefix": self._collection_name}}
 
     def _has_collection(self) -> bool:
@@ -92,7 +92,7 @@ class TencentVector(BaseVector):
             )
         )
 
-    def _create_collection(self, dimension: int):
+    def _create_collection(self, dimension: int) -> None:
         self._dimension = dimension
         lock_name = f"vector_indexing_lock_{self._collection_name}"
         with redis_client.lock(lock_name, timeout=20):
@@ -205,7 +205,7 @@ class TencentVector(BaseVector):
             return True
         return False
 
-    def delete_by_ids(self, ids: list[str]):
+    def delete_by_ids(self, ids: list[str]) -> None:
         if not ids:
             return
 
@@ -222,7 +222,7 @@ class TencentVector(BaseVector):
                 database_name=self._client_config.database, collection_name=self.collection_name, document_ids=batch_ids
             )
 
-    def delete_by_metadata_field(self, key: str, value: str):
+    def delete_by_metadata_field(self, key: str, value: str) -> None:
         self._client.delete(
             database_name=self._client_config.database,
             collection_name=self.collection_name,
@@ -299,7 +299,7 @@ class TencentVector(BaseVector):
                 docs.append(doc)
         return docs
 
-    def delete(self):
+    def delete(self) -> None:
         if self._has_collection():
             self._client.drop_collection(
                 database_name=self._client_config.database, collection_name=self.collection_name

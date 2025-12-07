@@ -2,10 +2,9 @@ from unittest.mock import patch
 
 import pytest
 from faker import Faker
-from sqlalchemy import select
 
 from core.app.entities.app_invoke_entities import InvokeFrom
-from models import Account
+from models.account import Account
 from models.model import Conversation, EndUser
 from models.web import PinnedConversation
 from services.account_service import AccountService, TenantService
@@ -144,7 +143,7 @@ class TestWebConversationService:
             system_instruction=fake.text(max_nb_chars=300),
             system_instruction_tokens=50,
             status="normal",
-            invoke_from=InvokeFrom.WEB_APP,
+            invoke_from=InvokeFrom.WEB_APP.value,
             from_source="console" if isinstance(user, Account) else "api",
             from_end_user_id=user.id if isinstance(user, EndUser) else None,
             from_account_id=user.id if isinstance(user, Account) else None,
@@ -355,14 +354,16 @@ class TestWebConversationService:
         # Verify only one pinned conversation record exists
         from extensions.ext_database import db
 
-        pinned_conversations = db.session.scalars(
-            select(PinnedConversation).where(
+        pinned_conversations = (
+            db.session.query(PinnedConversation)
+            .where(
                 PinnedConversation.app_id == app.id,
                 PinnedConversation.conversation_id == conversation.id,
                 PinnedConversation.created_by_role == "account",
                 PinnedConversation.created_by == account.id,
             )
-        ).all()
+            .all()
+        )
 
         assert len(pinned_conversations) == 1
 

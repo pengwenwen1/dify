@@ -2,7 +2,7 @@
 import type { FC } from 'react'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Input from '../../base/input'
+import Input from './input'
 import Button from '@/app/components/base/button'
 import { useDocLink } from '@/context/i18n'
 

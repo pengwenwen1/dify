@@ -4,7 +4,7 @@ from typing import Any
 from uuid import uuid4
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis import strategies as st
 
 from core.file import File, FileTransferMethod, FileType
@@ -371,7 +371,7 @@ def test_build_segment_array_any_properties():
     # Test properties
     assert segment.text == str(mixed_values)
     assert segment.log == str(mixed_values)
-    assert segment.markdown == "- string\n- 42\n- None"
+    assert segment.markdown == "string\n42\nNone"
     assert segment.to_object() == mixed_values
 
 
@@ -486,14 +486,13 @@ def _generate_file(draw) -> File:
 def _scalar_value() -> st.SearchStrategy[int | float | str | File | None]:
     return st.one_of(
         st.none(),
-        st.integers(min_value=-(10**6), max_value=10**6),
-        st.floats(allow_nan=True, allow_infinity=False),
-        st.text(max_size=50),
+        st.integers(),
+        st.floats(),
+        st.text(),
         _generate_file(),
     )
 
 
-@settings(max_examples=50)
 @given(_scalar_value())
 def test_build_segment_and_extract_values_for_scalar_types(value):
     seg = variable_factory.build_segment(value)
@@ -504,8 +503,7 @@ def test_build_segment_and_extract_values_for_scalar_types(value):
         assert seg.value == value
 
 
-@settings(max_examples=50)
-@given(values=st.lists(_scalar_value(), max_size=20))
+@given(st.lists(_scalar_value()))
 def test_build_segment_and_extract_values_for_array_types(values):
     seg = variable_factory.build_segment(values)
     assert seg.value == values

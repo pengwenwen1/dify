@@ -1,7 +1,7 @@
 import contextlib
 import re
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Optional
 
 
 def is_valid_trace_id(trace_id: str) -> bool:
@@ -13,7 +13,7 @@ def is_valid_trace_id(trace_id: str) -> bool:
     return bool(re.match(r"^[a-zA-Z0-9\-_]{1,128}$", trace_id))
 
 
-def get_external_trace_id(request: Any) -> str | None:
+def get_external_trace_id(request: Any) -> Optional[str]:
     """
     Retrieve the trace_id from the request.
 
@@ -49,7 +49,7 @@ def get_external_trace_id(request: Any) -> str | None:
     return None
 
 
-def extract_external_trace_id_from_args(args: Mapping[str, Any]):
+def extract_external_trace_id_from_args(args: Mapping[str, Any]) -> dict:
     """
     Extract 'external_trace_id' from args.
 
@@ -61,7 +61,7 @@ def extract_external_trace_id_from_args(args: Mapping[str, Any]):
     return {}
 
 
-def get_trace_id_from_otel_context() -> str | None:
+def get_trace_id_from_otel_context() -> Optional[str]:
     """
     Retrieve the current trace ID from the active OpenTelemetry trace context.
     Returns None if:
@@ -88,7 +88,7 @@ def get_trace_id_from_otel_context() -> str | None:
         return None
 
 
-def parse_traceparent_header(traceparent: str) -> str | None:
+def parse_traceparent_header(traceparent: str) -> Optional[str]:
     """
     Parse the `traceparent` header to extract the trace_id.
 

@@ -81,17 +81,6 @@ export const getOperators = (type?: VarType, file?: { key: string }) => {
           ComparisonOperator.empty,
           ComparisonOperator.notEmpty,
         ]
-      case 'related_id':
-        return [
-          ComparisonOperator.is,
-          ComparisonOperator.isNot,
-          ComparisonOperator.contains,
-          ComparisonOperator.notContains,
-          ComparisonOperator.startWith,
-          ComparisonOperator.endWith,
-          ComparisonOperator.empty,
-          ComparisonOperator.notEmpty,
-        ]
     }
     return []
   }
@@ -108,7 +97,6 @@ export const getOperators = (type?: VarType, file?: { key: string }) => {
         ComparisonOperator.notEmpty,
       ]
     case VarType.number:
-    case VarType.integer:
       return [
         ComparisonOperator.equal,
         ComparisonOperator.notEqual,

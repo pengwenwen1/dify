@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import {
   memo,
+  useCallback,
   useMemo,
 } from 'react'
 import { intersectionBy } from 'lodash-es'
@@ -52,6 +53,10 @@ const Panel: FC<NodePanelProps<KnowledgeRetrievalNodeType>> = ({
     availableNumberNodesWithParent,
   } = useConfig(id, data)
 
+  const handleOpenFromPropsChange = useCallback((openFromProps: boolean) => {
+    setRerankModelOpen(openFromProps)
+  }, [setRerankModelOpen])
+
   const metadataList = useMemo(() => {
     return intersectionBy(...selectedDatasets.filter((dataset) => {
       return !!dataset.doc_metadata
@@ -63,6 +68,7 @@ const Panel: FC<NodePanelProps<KnowledgeRetrievalNodeType>> = ({
   return (
     <div className='pt-2'>
       <div className='space-y-4 px-4 pb-2'>
+        {/* {JSON.stringify(inputs, null, 2)} */}
         <Field
           title={t(`${i18nPrefix}.queryVariable`)}
           required
@@ -94,8 +100,8 @@ const Panel: FC<NodePanelProps<KnowledgeRetrievalNodeType>> = ({
                 onSingleRetrievalModelChange={handleModelChanged as any}
                 onSingleRetrievalModelParamsChange={handleCompletionParamsChange}
                 readonly={readOnly || !selectedDatasets.length}
-                rerankModalOpen={rerankModelOpen}
-                onRerankModelOpenChange={setRerankModelOpen}
+                openFromProps={rerankModelOpen}
+                onOpenFromPropsChange={handleOpenFromPropsChange}
                 selectedDatasets={selectedDatasets}
               />
               {!readOnly && (<div className='h-3 w-px bg-divider-regular'></div>)}

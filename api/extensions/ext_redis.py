@@ -3,13 +3,14 @@ import logging
 import ssl
 from collections.abc import Callable
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import redis
 from redis import RedisError
 from redis.cache import CacheConfig
 from redis.cluster import ClusterNode, RedisCluster
 from redis.connection import Connection, SSLConnection
+from redis.lock import Lock
 from redis.sentinel import Sentinel
 
 from configs import dify_config
@@ -245,12 +246,7 @@ def init_app(app: DifyApp):
     app.extensions["redis"] = redis_client
 
 
-P = ParamSpec("P")
-R = TypeVar("R")
-T = TypeVar("T")
-
-
-def redis_fallback(default_return: T | None = None):  # type: ignore
+def redis_fallback(default_return: Optional[Any] = None):
     """
     decorator to handle Redis operation exceptions and return a default value when Redis is unavailable.
 
@@ -258,9 +254,9 @@ def redis_fallback(default_return: T | None = None):  # type: ignore
         default_return: The value to return when a Redis operation fails. Defaults to None.
     """
 
-    def decorator(func: Callable[P, R]):
+    def decorator(func: Callable):
         @functools.wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs):
+        def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except RedisError as e:

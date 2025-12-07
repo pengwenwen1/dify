@@ -108,7 +108,6 @@ class TestWorkflowDraftVariableService:
             created_by=app.created_by,
             environment_variables=[],
             conversation_variables=[],
-            rag_pipeline_variables=[],
         )
         from extensions.ext_database import db
 

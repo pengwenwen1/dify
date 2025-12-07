@@ -19,7 +19,6 @@ const translation = {
       tokens: 'توکن‌ها',
       user: 'کاربر نهایی یا حساب',
       version: 'نسخه',
-      triggered_from: 'فعال شده توسط',
     },
     pagination: {
       previous: 'قبلی',
@@ -66,8 +65,6 @@ const translation = {
       quarterToDate: 'از ابتدای فصل تاکنون',
       yearToDate: 'از ابتدای سال تاکنون',
       allTime: 'همه زمان‌ها',
-      last30days: '۳۰ روز گذشته',
-      custom: 'سفارشی',
     },
     annotation: {
       all: 'همه',
@@ -85,7 +82,6 @@ const translation = {
     workflowTitle: 'جزئیات لاگ',
     fileListLabel: 'جزئیات فایل',
     fileListDetail: 'جزئیات',
-    testWithParams: 'تست با پارامترها',
   },
   promptLog: 'لاگ درخواست',
   agentLog: 'لاگ عامل',
@@ -98,15 +94,6 @@ const translation = {
     finalProcessing: 'پردازش نهایی',
   },
   dateFormat: 'MM/DD/YYYY',
-  triggerBy: {
-    debugging: 'رفع اشکال',
-    appRun: 'وب اپ',
-    webhook: 'وب‌هوک',
-    schedule: 'برنامه',
-    plugin: 'افزونه',
-    ragPipelineRun: 'خط لوله RAG',
-    ragPipelineDebugging: 'رفع اشکال RAG',
-  },
 }
 
 export default translation

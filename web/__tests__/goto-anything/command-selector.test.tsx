@@ -16,7 +16,7 @@ jest.mock('cmdk', () => ({
     Item: ({ children, onSelect, value, className }: any) => (
       <div
         className={className}
-        onClick={() => onSelect?.()}
+        onClick={() => onSelect && onSelect()}
         data-value={value}
         data-testid={`command-item-${value}`}
       >

@@ -81,10 +81,6 @@ const translation = {
       ok: 'تأیید',
     },
     learnMore: 'بیشتر بدانید',
-    sort: {
-      uploadTime: 'زمان بارگذاری',
-      hitCount: 'تعداد بازیابی',
-    },
   },
   metadata: {
     title: 'اطلاعات متا',
@@ -102,9 +98,6 @@ const translation = {
       upload_file: 'بارگذاری فایل',
       notion: 'همگام‌سازی از Notion',
       github: 'همگام‌سازی از Github',
-      online_document: 'سند آنلاین',
-      website_crawl: 'خزیدن وب سایت',
-      local_file: 'فایل محلی',
     },
     type: {
       book: 'کتاب',
@@ -342,7 +335,6 @@ const translation = {
     pause: 'مکث',
     childMaxTokens: 'کودک',
     hierarchical: 'پدر و مادر و فرزند',
-    waiting: 'در حال انتظار برای جاسازی...',
   },
   segment: {
     paragraphs: 'پاراگراف‌ها',

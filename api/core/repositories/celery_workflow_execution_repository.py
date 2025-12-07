@@ -6,7 +6,7 @@ providing improved performance by offloading database operations to background w
 """
 
 import logging
-from typing import Union
+from typing import Optional, Union
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
@@ -39,8 +39,8 @@ class CeleryWorkflowExecutionRepository(WorkflowExecutionRepository):
 
     _session_factory: sessionmaker
     _tenant_id: str
-    _app_id: str | None
-    _triggered_from: WorkflowRunTriggeredFrom | None
+    _app_id: Optional[str]
+    _triggered_from: Optional[WorkflowRunTriggeredFrom]
     _creator_user_id: str
     _creator_user_role: CreatorUserRole
 
@@ -48,8 +48,8 @@ class CeleryWorkflowExecutionRepository(WorkflowExecutionRepository):
         self,
         session_factory: sessionmaker | Engine,
         user: Union[Account, EndUser],
-        app_id: str | None,
-        triggered_from: WorkflowRunTriggeredFrom | None,
+        app_id: Optional[str],
+        triggered_from: Optional[WorkflowRunTriggeredFrom],
     ):
         """
         Initialize the repository with Celery task configuration and context information.
@@ -74,7 +74,7 @@ class CeleryWorkflowExecutionRepository(WorkflowExecutionRepository):
         tenant_id = extract_tenant_id(user)
         if not tenant_id:
             raise ValueError("User must have a tenant_id or current_tenant_id")
-        self._tenant_id = tenant_id
+        self._tenant_id = tenant_id  # type: ignore[assignment]  # We've already checked tenant_id is not None
 
         # Store app context
         self._app_id = app_id
@@ -93,7 +93,7 @@ class CeleryWorkflowExecutionRepository(WorkflowExecutionRepository):
             self._triggered_from,
         )
 
-    def save(self, execution: WorkflowExecution):
+    def save(self, execution: WorkflowExecution) -> None:
         """
         Save or update a WorkflowExecution instance asynchronously using Celery.
 
@@ -108,7 +108,7 @@ class CeleryWorkflowExecutionRepository(WorkflowExecutionRepository):
             execution_data = execution.model_dump()
 
             # Queue the save operation as a Celery task (fire and forget)
-            save_workflow_execution_task.delay(  # type: ignore
+            save_workflow_execution_task.delay(
                 execution_data=execution_data,
                 tenant_id=self._tenant_id,
                 app_id=self._app_id or "",

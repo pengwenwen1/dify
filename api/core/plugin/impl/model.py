@@ -1,6 +1,6 @@
 import binascii
 from collections.abc import Generator, Sequence
-from typing import IO
+from typing import IO, Optional
 
 from core.model_runtime.entities.llm_entities import LLMResultChunk
 from core.model_runtime.entities.message_entities import PromptMessage, PromptMessageTool
@@ -151,9 +151,9 @@ class PluginModelClient(BasePluginClient):
         model: str,
         credentials: dict,
         prompt_messages: list[PromptMessage],
-        model_parameters: dict | None = None,
-        tools: list[PromptMessageTool] | None = None,
-        stop: list[str] | None = None,
+        model_parameters: Optional[dict] = None,
+        tools: Optional[list[PromptMessageTool]] = None,
+        stop: Optional[list[str]] = None,
         stream: bool = True,
     ) -> Generator[LLMResultChunk, None, None]:
         """
@@ -162,7 +162,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/llm/invoke",
-            type_=LLMResultChunk,
+            type=LLMResultChunk,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -200,7 +200,7 @@ class PluginModelClient(BasePluginClient):
         model: str,
         credentials: dict,
         prompt_messages: list[PromptMessage],
-        tools: list[PromptMessageTool] | None = None,
+        tools: Optional[list[PromptMessageTool]] = None,
     ) -> int:
         """
         Get number of tokens for llm
@@ -208,7 +208,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/llm/num_tokens",
-            type_=PluginLLMNumTokensResponse,
+            type=PluginLLMNumTokensResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -250,7 +250,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/text_embedding/invoke",
-            type_=TextEmbeddingResult,
+            type=TextEmbeddingResult,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -291,7 +291,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/text_embedding/num_tokens",
-            type_=PluginTextEmbeddingNumTokensResponse,
+            type=PluginTextEmbeddingNumTokensResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -325,8 +325,8 @@ class PluginModelClient(BasePluginClient):
         credentials: dict,
         query: str,
         docs: list[str],
-        score_threshold: float | None = None,
-        top_n: int | None = None,
+        score_threshold: Optional[float] = None,
+        top_n: Optional[int] = None,
     ) -> RerankResult:
         """
         Invoke rerank
@@ -334,7 +334,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/rerank/invoke",
-            type_=RerankResult,
+            type=RerankResult,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -378,7 +378,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/tts/invoke",
-            type_=PluginStringResultResponse,
+            type=PluginStringResultResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -414,15 +414,15 @@ class PluginModelClient(BasePluginClient):
         provider: str,
         model: str,
         credentials: dict,
-        language: str | None = None,
-    ):
+        language: Optional[str] = None,
+    ) -> list[dict]:
         """
         Get tts model voices
         """
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/tts/model/voices",
-            type_=PluginVoicesResponse,
+            type=PluginVoicesResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -466,7 +466,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/speech2text/invoke",
-            type_=PluginStringResultResponse,
+            type=PluginStringResultResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,
@@ -506,7 +506,7 @@ class PluginModelClient(BasePluginClient):
         response = self._request_with_plugin_daemon_response_stream(
             method="POST",
             path=f"plugin/{tenant_id}/dispatch/moderation/invoke",
-            type_=PluginBasicBooleanResponse,
+            type=PluginBasicBooleanResponse,
             data=jsonable_encoder(
                 {
                     "user_id": user_id,

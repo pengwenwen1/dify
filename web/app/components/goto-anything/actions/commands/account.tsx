@@ -13,12 +13,6 @@ type AccountDeps = Record<string, never>
 export const accountCommand: SlashCommandHandler<AccountDeps> = {
   name: 'account',
   description: 'Navigate to account page',
-  mode: 'direct',
-
-  // Direct execution function
-  execute: () => {
-    window.location.href = '/account'
-  },
 
   async search(args: string, locale: string = 'en') {
     return [{

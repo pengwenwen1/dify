@@ -1,5 +1,6 @@
 """Unit tests for workflow node execution conflict handling."""
 
+from datetime import datetime
 from unittest.mock import MagicMock, Mock
 
 import psycopg2.errors
@@ -14,8 +15,7 @@ from core.workflow.entities.workflow_node_execution import (
     WorkflowNodeExecution,
     WorkflowNodeExecutionStatus,
 )
-from core.workflow.enums import NodeType
-from libs.datetime_utils import naive_utc_now
+from core.workflow.nodes.enums import NodeType
 from models import Account, WorkflowNodeExecutionTriggeredFrom
 
 
@@ -74,7 +74,7 @@ class TestWorkflowNodeExecutionConflictHandling:
             title="Test Node",
             index=1,
             status=WorkflowNodeExecutionStatus.RUNNING,
-            created_at=naive_utc_now(),
+            created_at=datetime.utcnow(),
         )
 
         original_id = execution.id
@@ -112,7 +112,7 @@ class TestWorkflowNodeExecutionConflictHandling:
             title="Test Node",
             index=1,
             status=WorkflowNodeExecutionStatus.SUCCEEDED,
-            created_at=naive_utc_now(),
+            created_at=datetime.utcnow(),
         )
 
         # Save should update existing record
@@ -157,7 +157,7 @@ class TestWorkflowNodeExecutionConflictHandling:
             title="Test Node",
             index=1,
             status=WorkflowNodeExecutionStatus.RUNNING,
-            created_at=naive_utc_now(),
+            created_at=datetime.utcnow(),
         )
 
         # Save should raise IntegrityError after max retries
@@ -199,7 +199,7 @@ class TestWorkflowNodeExecutionConflictHandling:
             title="Test Node",
             index=1,
             status=WorkflowNodeExecutionStatus.RUNNING,
-            created_at=naive_utc_now(),
+            created_at=datetime.utcnow(),
         )
 
         # Save should raise error immediately

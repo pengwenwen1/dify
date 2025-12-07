@@ -5,13 +5,11 @@ from controllers.inner_api import inner_api_ns
 from controllers.inner_api.wraps import billing_inner_api_only, enterprise_inner_api_only
 from tasks.mail_inner_task import send_inner_email_task
 
-_mail_parser = (
-    reqparse.RequestParser()
-    .add_argument("to", type=str, action="append", required=True)
-    .add_argument("subject", type=str, required=True)
-    .add_argument("body", type=str, required=True)
-    .add_argument("substitutions", type=dict, required=False)
-)
+_mail_parser = reqparse.RequestParser()
+_mail_parser.add_argument("to", type=str, action="append", required=True)
+_mail_parser.add_argument("subject", type=str, required=True)
+_mail_parser.add_argument("body", type=str, required=True)
+_mail_parser.add_argument("substitutions", type=dict, required=False)
 
 
 class BaseMail(Resource):
@@ -19,7 +17,7 @@ class BaseMail(Resource):
 
     def post(self):
         args = _mail_parser.parse_args()
-        send_inner_email_task.delay(  # type: ignore
+        send_inner_email_task.delay(
             to=args["to"],
             subject=args["subject"],
             body=args["body"],

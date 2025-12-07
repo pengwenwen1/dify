@@ -30,7 +30,7 @@ export const PrevButton = ({
   className,
   children,
   dataTestId,
-  as = <button type="button" />,
+  as = <button />,
   ...buttonProps
 }: ButtonProps) => {
   const pagination = React.useContext(PaginationContext)
@@ -65,7 +65,7 @@ export const NextButton = ({
   className,
   children,
   dataTestId,
-  as = <button type="button" />,
+  as = <button />,
   ...buttonProps
 }: ButtonProps) => {
   const pagination = React.useContext(PaginationContext)

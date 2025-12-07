@@ -1,7 +1,6 @@
 import base64
 import logging
-import pickle
-from typing import Any, cast
+from typing import Any, Optional, cast
 
 import numpy as np
 from sqlalchemy.exc import IntegrityError
@@ -21,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class CacheEmbedding(Embeddings):
-    def __init__(self, model_instance: ModelInstance, user: str | None = None):
+    def __init__(self, model_instance: ModelInstance, user: Optional[str] = None) -> None:
         self._model_instance = model_instance
         self._user = user
 
@@ -43,9 +42,6 @@ class CacheEmbedding(Embeddings):
                 text_embeddings[i] = embedding.get_embedding()
             else:
                 embedding_queue_indices.append(i)
-
-        # NOTE: avoid closing the shared scoped session here; downstream code may still have pending work
-
         if embedding_queue_indices:
             embedding_queue_texts = [texts[i] for i in embedding_queue_indices]
             embedding_queue_embeddings = []
@@ -90,8 +86,8 @@ class CacheEmbedding(Embeddings):
                                 model_name=self._model_instance.model,
                                 hash=hash,
                                 provider_name=self._model_instance.provider,
-                                embedding=pickle.dumps(n_embedding, protocol=pickle.HIGHEST_PROTOCOL),
                             )
+                            embedding_cache.set_embedding(n_embedding)
                             db.session.add(embedding_cache)
                             cache_embeddings.append(hash)
                     db.session.commit()

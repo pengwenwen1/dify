@@ -3,14 +3,14 @@ import json
 import logging
 import uuid
 from collections.abc import Mapping, Sequence
-from typing import Any, cast
+from typing import Any, Optional, cast
 
 from core.app.entities.app_invoke_entities import ModelConfigWithCredentialsEntity
 from core.file import File
 from core.memory.token_buffer_memory import TokenBufferMemory
 from core.model_manager import ModelInstance
 from core.model_runtime.entities import ImagePromptMessageContent
-from core.model_runtime.entities.llm_entities import LLMUsage
+from core.model_runtime.entities.llm_entities import LLMResult, LLMUsage
 from core.model_runtime.entities.message_entities import (
     AssistantPromptMessage,
     PromptMessage,
@@ -27,16 +27,19 @@ from core.prompt.entities.advanced_prompt_entities import ChatModelMessage, Comp
 from core.prompt.simple_prompt_transform import ModelMode
 from core.prompt.utils.prompt_message_util import PromptMessageUtil
 from core.variables.types import ArrayValidation, SegmentType
-from core.workflow.enums import NodeType, WorkflowNodeExecutionMetadataKey, WorkflowNodeExecutionStatus
-from core.workflow.node_events import NodeRunResult
-from core.workflow.nodes.base import variable_template_parser
-from core.workflow.nodes.base.node import Node
+from core.workflow.entities.node_entities import NodeRunResult
+from core.workflow.entities.variable_pool import VariablePool
+from core.workflow.entities.workflow_node_execution import WorkflowNodeExecutionMetadataKey, WorkflowNodeExecutionStatus
+from core.workflow.nodes.base.entities import BaseNodeData, RetryConfig
+from core.workflow.nodes.base.node import BaseNode
+from core.workflow.nodes.enums import ErrorStrategy, NodeType
 from core.workflow.nodes.llm import ModelConfig, llm_utils
-from core.workflow.runtime import VariablePool
+from core.workflow.utils import variable_template_parser
 from factories.variable_factory import build_segment_with_type
 
 from .entities import ParameterExtractorNodeData
 from .exc import (
+    InvalidInvokeResultError,
     InvalidModelModeError,
     InvalidModelTypeError,
     InvalidNumberOfParametersError,
@@ -49,7 +52,6 @@ from .exc import (
 )
 from .prompts import (
     CHAT_EXAMPLE,
-    CHAT_GENERATE_JSON_PROMPT,
     CHAT_GENERATE_JSON_USER_MESSAGE_TEMPLATE,
     COMPLETION_GENERATE_JSON_PROMPT,
     FUNCTION_CALLING_EXTRACTOR_EXAMPLE,
@@ -83,18 +85,41 @@ def extract_json(text):
     return None
 
 
-class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
+class ParameterExtractorNode(BaseNode):
     """
     Parameter Extractor Node.
     """
 
-    node_type = NodeType.PARAMETER_EXTRACTOR
+    _node_type = NodeType.PARAMETER_EXTRACTOR
 
-    _model_instance: ModelInstance | None = None
-    _model_config: ModelConfigWithCredentialsEntity | None = None
+    _node_data: ParameterExtractorNodeData
+
+    def init_node_data(self, data: Mapping[str, Any]) -> None:
+        self._node_data = ParameterExtractorNodeData.model_validate(data)
+
+    def _get_error_strategy(self) -> Optional[ErrorStrategy]:
+        return self._node_data.error_strategy
+
+    def _get_retry_config(self) -> RetryConfig:
+        return self._node_data.retry_config
+
+    def _get_title(self) -> str:
+        return self._node_data.title
+
+    def _get_description(self) -> Optional[str]:
+        return self._node_data.desc
+
+    def _get_default_value_dict(self) -> dict[str, Any]:
+        return self._node_data.default_value_dict
+
+    def get_base_node_data(self) -> BaseNodeData:
+        return self._node_data
+
+    _model_instance: Optional[ModelInstance] = None
+    _model_config: Optional[ModelConfigWithCredentialsEntity] = None
 
     @classmethod
-    def get_default_config(cls, filters: Mapping[str, object] | None = None) -> Mapping[str, object]:
+    def get_default_config(cls, filters: Optional[dict] = None) -> dict:
         return {
             "model": {
                 "prompt_templates": {
@@ -114,7 +139,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         """
         Run the node.
         """
-        node_data = self.node_data
+        node_data = self._node_data
         variable = self.graph_runtime_state.variable_pool.get(node_data.query)
         query = variable.text if variable else ""
 
@@ -269,7 +294,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         prompt_messages: list[PromptMessage],
         tools: list[PromptMessageTool],
         stop: list[str],
-    ) -> tuple[str, LLMUsage, AssistantPromptMessage.ToolCall | None]:
+    ) -> tuple[str, LLMUsage, Optional[AssistantPromptMessage.ToolCall]]:
         invoke_result = model_instance.invoke_llm(
             prompt_messages=prompt_messages,
             model_parameters=node_data_model.completion_params,
@@ -280,6 +305,8 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         )
 
         # handle invoke result
+        if not isinstance(invoke_result, LLMResult):
+            raise InvalidInvokeResultError(f"Invalid invoke result: {invoke_result}")
 
         text = invoke_result.message.content or ""
         if not isinstance(text, str):
@@ -291,6 +318,9 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         # deduct quota
         llm_utils.deduct_llm_quota(tenant_id=self.tenant_id, model_instance=model_instance, usage=usage)
 
+        if text is None:
+            text = ""
+
         return text, usage, tool_call
 
     def _generate_function_call_prompt(
@@ -299,9 +329,9 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         query: str,
         variable_pool: VariablePool,
         model_config: ModelConfigWithCredentialsEntity,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         files: Sequence[File],
-        vision_detail: ImagePromptMessageContent.DETAIL | None = None,
+        vision_detail: Optional[ImagePromptMessageContent.DETAIL] = None,
     ) -> tuple[list[PromptMessage], list[PromptMessageTool]]:
         """
         Generate function call prompt.
@@ -381,9 +411,9 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         query: str,
         variable_pool: VariablePool,
         model_config: ModelConfigWithCredentialsEntity,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         files: Sequence[File],
-        vision_detail: ImagePromptMessageContent.DETAIL | None = None,
+        vision_detail: Optional[ImagePromptMessageContent.DETAIL] = None,
     ) -> list[PromptMessage]:
         """
         Generate prompt engineering prompt.
@@ -419,9 +449,9 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         query: str,
         variable_pool: VariablePool,
         model_config: ModelConfigWithCredentialsEntity,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         files: Sequence[File],
-        vision_detail: ImagePromptMessageContent.DETAIL | None = None,
+        vision_detail: Optional[ImagePromptMessageContent.DETAIL] = None,
     ) -> list[PromptMessage]:
         """
         Generate completion prompt.
@@ -453,9 +483,9 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         query: str,
         variable_pool: VariablePool,
         model_config: ModelConfigWithCredentialsEntity,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         files: Sequence[File],
-        vision_detail: ImagePromptMessageContent.DETAIL | None = None,
+        vision_detail: Optional[ImagePromptMessageContent.DETAIL] = None,
     ) -> list[PromptMessage]:
         """
         Generate chat prompt.
@@ -515,7 +545,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
 
         return prompt_messages
 
-    def _validate_result(self, data: ParameterExtractorNodeData, result: dict):
+    def _validate_result(self, data: ParameterExtractorNodeData, result: dict) -> dict:
         if len(data.parameters) != len(result):
             raise InvalidNumberOfParametersError("Invalid number of parameters")
 
@@ -554,21 +584,20 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
             return int(value)
         elif isinstance(value, (int, float)):
             return value
-        elif isinstance(value, str):
-            if "." in value:
-                try:
-                    return float(value)
-                except ValueError:
-                    return None
-            else:
-                try:
-                    return int(value)
-                except ValueError:
-                    return None
-        else:
+        elif not isinstance(value, str):
             return None
+        if "." in value:
+            try:
+                return float(value)
+            except ValueError:
+                return None
+        else:
+            try:
+                return int(value)
+            except ValueError:
+                return None
 
-    def _transform_result(self, data: ParameterExtractorNodeData, result: dict):
+    def _transform_result(self, data: ParameterExtractorNodeData, result: dict) -> dict:
         """
         Transform result into standard format.
         """
@@ -627,7 +656,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
 
         return transformed_result
 
-    def _extract_complete_json_response(self, result: str) -> dict | None:
+    def _extract_complete_json_response(self, result: str) -> Optional[dict]:
         """
         Extract complete json response.
         """
@@ -642,7 +671,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         logger.info("extra error: %s", result)
         return None
 
-    def _extract_json_from_tool_call(self, tool_call: AssistantPromptMessage.ToolCall) -> dict | None:
+    def _extract_json_from_tool_call(self, tool_call: AssistantPromptMessage.ToolCall) -> Optional[dict]:
         """
         Extract json from tool call.
         """
@@ -661,7 +690,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         logger.info("extra error: %s", result)
         return None
 
-    def _generate_default_result(self, data: ParameterExtractorNodeData):
+    def _generate_default_result(self, data: ParameterExtractorNodeData) -> dict:
         """
         Generate default result.
         """
@@ -669,7 +698,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         for parameter in data.parameters:
             if parameter.type == "number":
                 result[parameter.name] = 0
-            elif parameter.type == "boolean":
+            elif parameter.type == "bool":
                 result[parameter.name] = False
             elif parameter.type in {"string", "select"}:
                 result[parameter.name] = ""
@@ -681,7 +710,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         node_data: ParameterExtractorNodeData,
         query: str,
         variable_pool: VariablePool,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         max_token_limit: int = 2000,
     ) -> list[ChatModelMessage]:
         model_mode = ModelMode(node_data.model.mode)
@@ -708,7 +737,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         node_data: ParameterExtractorNodeData,
         query: str,
         variable_pool: VariablePool,
-        memory: TokenBufferMemory | None,
+        memory: Optional[TokenBufferMemory],
         max_token_limit: int = 2000,
     ):
         model_mode = ModelMode(node_data.model.mode)
@@ -723,7 +752,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         if model_mode == ModelMode.CHAT:
             system_prompt_messages = ChatModelMessage(
                 role=PromptMessageRole.SYSTEM,
-                text=CHAT_GENERATE_JSON_PROMPT.format(histories=memory_str, instructions=instruction),
+                text=FUNCTION_CALLING_EXTRACTOR_SYSTEM_PROMPT.format(histories=memory_str, instruction=instruction),
             )
             user_prompt_message = ChatModelMessage(role=PromptMessageRole.USER, text=input_text)
             return [system_prompt_messages, user_prompt_message]
@@ -744,7 +773,7 @@ class ParameterExtractorNode(Node[ParameterExtractorNodeData]):
         query: str,
         variable_pool: VariablePool,
         model_config: ModelConfigWithCredentialsEntity,
-        context: str | None,
+        context: Optional[str],
     ) -> int:
         prompt_transform = AdvancedPromptTransform(with_variable_tmpl=True)
 

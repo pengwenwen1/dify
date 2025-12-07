@@ -1,8 +1,8 @@
 import logging
 
-import sendgrid
+import sendgrid  # type: ignore
 from python_http_client.exceptions import ForbiddenError, UnauthorizedError
-from sendgrid.helpers.mail import Content, Email, Mail, To
+from sendgrid.helpers.mail import Content, Email, Mail, To  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class SendGridClient:
 
     def send(self, mail: dict):
         logger.debug("Sending email with SendGrid")
-        _to = ""
+
         try:
             _to = mail["to"]
 
@@ -28,7 +28,7 @@ class SendGridClient:
             content = Content("text/html", mail["html"])
             sg_mail = Mail(from_email, to_email, subject, content)
             mail_json = sg_mail.get()
-            response = sg.client.mail.send.post(request_body=mail_json)  # type: ignore
+            response = sg.client.mail.send.post(request_body=mail_json)  # ty: ignore [call-non-callable]
             logger.debug(response.status_code)
             logger.debug(response.body)
             logger.debug(response.headers)

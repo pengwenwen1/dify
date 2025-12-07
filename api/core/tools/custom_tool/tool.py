@@ -2,7 +2,7 @@ import json
 from collections.abc import Generator
 from dataclasses import dataclass
 from os import getenv
-from typing import Any, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlencode
 
 import httpx
@@ -290,7 +290,6 @@ class ApiTool(Tool):
             method_lc
         ](  # https://discuss.python.org/t/type-inference-for-function-return-types/42926
             url,
-            max_retries=0,
             params=params,
             headers=headers,
             cookies=cookies,
@@ -303,7 +302,7 @@ class ApiTool(Tool):
 
     def _convert_body_property_any_of(
         self, property: dict[str, Any], value: Any, any_of: list[dict[str, Any]], max_recursive=10
-    ):
+    ) -> Any:
         if max_recursive <= 0:
             raise Exception("Max recursion depth reached")
         for option in any_of or []:
@@ -338,7 +337,7 @@ class ApiTool(Tool):
         # If no option succeeded, you might want to return the value as is or raise an error
         return value  # or raise ValueError(f"Cannot convert value '{value}' to any specified type in anyOf")
 
-    def _convert_body_property_type(self, property: dict[str, Any], value: Any):
+    def _convert_body_property_type(self, property: dict[str, Any], value: Any) -> Any:
         try:
             if "type" in property:
                 if property["type"] == "integer" or property["type"] == "int":
@@ -377,9 +376,9 @@ class ApiTool(Tool):
         self,
         user_id: str,
         tool_parameters: dict[str, Any],
-        conversation_id: str | None = None,
-        app_id: str | None = None,
-        message_id: str | None = None,
+        conversation_id: Optional[str] = None,
+        app_id: Optional[str] = None,
+        message_id: Optional[str] = None,
     ) -> Generator[ToolInvokeMessage, None, None]:
         """
         invoke http request
@@ -395,14 +394,8 @@ class ApiTool(Tool):
         parsed_response = self.validate_and_parse_response(response)
 
         # assemble invoke message based on response type
-        if parsed_response.is_json:
-            if isinstance(parsed_response.content, dict):
-                yield self.create_json_message(parsed_response.content)
-
-            # The yield below must be preserved to keep backward compatibility.
-            #
-            # ref: https://github.com/langgenius/dify/pull/23456#issuecomment-3182413088
-            yield self.create_text_message(response.text)
+        if parsed_response.is_json and isinstance(parsed_response.content, dict):
+            yield self.create_json_message(parsed_response.content)
         else:
             # Convert to string if needed and create text message
             text_response = (

@@ -81,10 +81,6 @@ const translation = {
     },
     addUrl: 'Adăugați adresa URL',
     learnMore: 'Află mai multe',
-    sort: {
-      uploadTime: 'Timp de încărcare',
-      hitCount: 'Număr de recuperări',
-    },
   },
   metadata: {
     title: 'Metadate',
@@ -103,9 +99,6 @@ const translation = {
       upload_file: 'Încarcă fișier',
       notion: 'Sincronizează din Notion',
       github: 'Sincronizează din Github',
-      local_file: 'Fișier local',
-      website_crawl: 'Accesarea cu crawlere a site-ului web',
-      online_document: 'Online Document',
     },
     type: {
       book: 'Carte',
@@ -343,7 +336,6 @@ const translation = {
     childMaxTokens: 'Copil',
     parentMaxTokens: 'Părinte',
     pause: 'Pauză',
-    waiting: 'Așteptând încorporarea...',
   },
   segment: {
     paragraphs: 'Paragrafe',

@@ -6,7 +6,7 @@ import { isEqual } from 'lodash-es'
 import { RiCloseLine } from '@remixicon/react'
 import { ApiConnectionMod } from '@/app/components/base/icons/src/vender/solid/development'
 import cn from '@/utils/classnames'
-import IndexMethod from '@/app/components/datasets/settings/index-method'
+import IndexMethodRadio from '@/app/components/datasets/settings/index-method-radio'
 import Divider from '@/app/components/base/divider'
 import Button from '@/app/components/base/button'
 import Input from '@/app/components/base/input'
@@ -16,7 +16,6 @@ import { useToastContext } from '@/app/components/base/toast'
 import { updateDatasetSetting } from '@/service/datasets'
 import { useAppContext } from '@/context/app-context'
 import { useModalContext } from '@/context/modal-context'
-import { ACCOUNT_SETTING_TAB } from '@/app/components/header/account-setting/constants'
 import type { RetrievalConfig } from '@/types/app'
 import RetrievalSettings from '@/app/components/datasets/external-knowledge-base/create/RetrievalSettings'
 import RetrievalMethodConfig from '@/app/components/datasets/common/retrieval-method-config'
@@ -32,7 +31,6 @@ import {
 import { ModelTypeEnum } from '@/app/components/header/account-setting/model-provider-page/declarations'
 import { fetchMembers } from '@/service/common'
 import type { Member } from '@/models/common'
-import { IndexingType } from '@/app/components/datasets/create/step-two'
 import { useDocLink } from '@/context/i18n'
 
 type SettingsModalProps = {
@@ -75,7 +73,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
 
   const [indexMethod, setIndexMethod] = useState(currentDataset.indexing_technique)
   const [retrievalConfig, setRetrievalConfig] = useState(localeCurrentDataset?.retrieval_model_dict as RetrievalConfig)
-  const [keywordNumber, setKeywordNumber] = useState(currentDataset.keyword_number ?? 10)
 
   const handleValueChange = (type: string, value: string) => {
     setLocaleCurrentDataset({ ...localeCurrentDataset, [type]: value })
@@ -127,7 +124,6 @@ const SettingsModal: FC<SettingsModalProps> = ({
           description,
           permission,
           indexing_technique: indexMethod,
-          keyword_number: keywordNumber,
           retrieval_model: {
             ...retrievalConfig,
             score_threshold: retrievalConfig.score_threshold_enabled ? retrievalConfig.score_threshold : 0,
@@ -249,18 +245,17 @@ const SettingsModal: FC<SettingsModalProps> = ({
               <div className='system-sm-semibold text-text-secondary'>{t('datasetSettings.form.indexMethod')}</div>
             </div>
             <div className='grow'>
-              <IndexMethod
-                disabled={!localeCurrentDataset?.embedding_available}
+              <IndexMethodRadio
+                disable={!localeCurrentDataset?.embedding_available}
                 value={indexMethod}
-                onChange={setIndexMethod}
+                onChange={v => setIndexMethod(v!)}
+                docForm={currentDataset.doc_form}
                 currentValue={currentDataset.indexing_technique}
-                keywordNumber={keywordNumber}
-                onKeywordNumberChange={setKeywordNumber}
               />
             </div>
           </div>
         )}
-        {indexMethod === IndexingType.QUALIFIED && (
+        {indexMethod === 'high_quality' && (
           <div className={cn(rowClass)}>
             <div className={labelClass}>
               <div className='system-sm-semibold text-text-secondary'>{t('datasetSettings.form.embeddingModel')}</div>
@@ -278,7 +273,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
               </div>
               <div className='mt-2 w-full text-xs leading-6 text-text-tertiary'>
                 {t('datasetSettings.form.embeddingModelTip')}
-                <span className='cursor-pointer text-text-accent' onClick={() => setShowAccountSettingModal({ payload: ACCOUNT_SETTING_TAB.PROVIDER })}>{t('datasetSettings.form.embeddingModelTipLink')}</span>
+                <span className='cursor-pointer text-text-accent' onClick={() => setShowAccountSettingModal({ payload: 'provider' })}>{t('datasetSettings.form.embeddingModelTipLink')}</span>
               </div>
             </div>
           </div>
@@ -339,7 +334,7 @@ const SettingsModal: FC<SettingsModalProps> = ({
               </div>
             </div>
             <div>
-              {indexMethod === IndexingType.QUALIFIED
+              {indexMethod === 'high_quality'
                 ? (
                   <RetrievalMethodConfig
                     value={retrievalConfig}

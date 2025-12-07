@@ -19,7 +19,8 @@ import Modal from '@/app/components/base/modal'
 import Button from '@/app/components/base/button'
 import Toast from '@/app/components/base/toast'
 import { generateBasicAppFirstTimeRule, generateRule } from '@/service/debug'
-import type { AppModeEnum, CompletionParams, Model } from '@/types/app'
+import type { CompletionParams, Model } from '@/types/app'
+import type { AppType } from '@/types/app'
 import Loading from '@/app/components/base/loading'
 import Confirm from '@/app/components/base/confirm'
 
@@ -43,13 +44,12 @@ import { useGenerateRuleTemplate } from '@/service/use-apps'
 
 const i18nPrefix = 'appDebug.generate'
 export type IGetAutomaticResProps = {
-  mode: AppModeEnum
+  mode: AppType
   isShow: boolean
   onClose: () => void
   onFinished: (res: GenRes) => void
   flowId?: string
   nodeId?: string
-  editorId?: string
   currentPrompt?: string
   isBasicMode?: boolean
 }
@@ -76,7 +76,6 @@ const GetAutomaticRes: FC<IGetAutomaticResProps> = ({
   onClose,
   flowId,
   nodeId,
-  editorId,
   currentPrompt,
   isBasicMode,
   onFinished,
@@ -133,8 +132,7 @@ const GetAutomaticRes: FC<IGetAutomaticResProps> = ({
     },
   ]
 
-  // eslint-disable-next-line sonarjs/no-nested-template-literals, sonarjs/no-nested-conditional
-  const [instructionFromSessionStorage, setInstruction] = useSessionStorageState<string>(`improve-instruction-${flowId}${isBasicMode ? '' : `-${nodeId}${editorId ? `-${editorId}` : ''}`}`)
+  const [instructionFromSessionStorage, setInstruction] = useSessionStorageState<string>(`improve-instruction-${flowId}${isBasicMode ? '' : `-${nodeId}`}`)
   const instruction = instructionFromSessionStorage || ''
   const [ideaOutput, setIdeaOutput] = useState<string>('')
 
@@ -168,7 +166,7 @@ const GetAutomaticRes: FC<IGetAutomaticResProps> = ({
     return true
   }
   const [isLoading, { setTrue: setLoadingTrue, setFalse: setLoadingFalse }] = useBoolean(false)
-  const storageKey = `${flowId}${isBasicMode ? '' : `-${nodeId}${editorId ? `-${editorId}` : ''}`}`
+  const storageKey = `${flowId}${isBasicMode ? '' : `-${nodeId}`}`
   const { addVersion, current, currentVersionIndex, setCurrentVersionIndex, versions } = useGenData({
     storageKey,
   })
@@ -298,6 +296,7 @@ const GetAutomaticRes: FC<IGetAutomaticResProps> = ({
               portalToFollowElemContentClassName='z-[1000]'
               isAdvancedMode={true}
               provider={model.provider}
+              mode={model.mode}
               completionParams={model.completion_params}
               modelId={model.name}
               setModel={handleModelChange}

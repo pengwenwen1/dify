@@ -88,7 +88,6 @@ const translation = {
     chooseAppType: 'Izberite vrsto aplikacije',
     learnMore: 'Izvedi več',
     dropDSLToCreateApp: 'Spustite DSL datoteko sem, da ustvarite aplikacijo',
-    import: 'Uvoz',
   },
   editApp: 'Uredi informacije',
   editAppTitle: 'Uredi informacije o aplikaciji',
@@ -163,14 +162,6 @@ const translation = {
       viewDocsLink: 'Ogled dokumentov {{key}}',
       removeConfirmTitle: 'Odstraniti konfiguracijo {{key}}?',
       removeConfirmContent: 'Trenutna konfiguracija je v uporabi, odstranitev bo onemogočila funkcijo sledenja.',
-      password: 'Geslo',
-      personalAccessToken: 'Osebni dostopni žeton (stari)',
-      experimentId: 'ID eksperimenta',
-      clientSecret: 'OAuth skrivnost odjemalca',
-      trackingUri: 'Sledenje URI',
-      clientId: 'ID odjemalca OAuth',
-      databricksHost: 'URL delovnega prostora Databricks',
-      username: 'Uporabniško ime',
     },
     opik: {
       description: 'Opik je odprtokodna platforma za ocenjevanje, testiranje in spremljanje aplikacij LLM.',
@@ -183,18 +174,6 @@ const translation = {
     aliyun: {
       title: 'Oblačni nadzor',
       description: 'Popolnoma upravljana in brez vzdrževanja platforma za opazovanje, ki jo zagotavlja Alibaba Cloud, omogoča takojšnje spremljanje, sledenje in ocenjevanje aplikacij Dify.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'Odprtokodna platforma LLMOps za sledenje eksperimentom, opazljivost in ocenjevanje, za gradnjo aplikacij AI/LLM z zaupanjem.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks ponuja popolnoma upravljan MLflow z močnim upravljanjem in varnostjo za shranjevanje podatkov sledenja.',
-    },
-    tencent: {
-      description: 'Tencent Application Performance Monitoring zagotavlja celovito sledenje in večdimenzionalno analizo za aplikacije LLM.',
-      title: 'Tencent APM',
     },
   },
   mermaid: {
@@ -302,8 +281,6 @@ const translation = {
       docDesc: 'Odprite pomoč dokumentacijo',
       feedbackDesc: 'Razprave o povratnih informacijah odprte skupnosti',
       communityDesc: 'Odpri Discord skupnost',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noPluginsFound: 'Vtičnikov ni mogoče najti',
@@ -339,13 +316,7 @@ const translation = {
     tryDifferentSearch: 'Poskusite uporabiti drug iskalni izraz',
     noMatchingCommands: 'Ujemajoči se ukazi niso našli',
     slashHint: 'Vnesite / za ogled vseh razpoložljivih ukazov',
-    startTyping: 'Začnite vnašati za iskanje',
-    pressEscToClose: 'Pritisnite ESC za zapiranje',
-    selectToNavigate: 'Izberite za navigacijo',
-    tips: 'Pritisnite ↑↓ za navigacijo',
   },
-  notPublishedYet: 'Aplikacija še ni objavljena',
-  noUserInputNode: 'Manjka vozel uporabniškega vnosa',
 }
 
 export default translation

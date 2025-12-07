@@ -61,21 +61,10 @@ const translation = {
     deSelectAll: 'Вимкнути все',
     selectAll: 'Вибрати все',
     config: 'Конфігурація',
-    yes: 'Так',
-    no: 'Ні',
-    deleteConfirmTitle: 'Видалити?',
-    confirmAction: 'Будь ласка, підтвердіть свої дії.',
-    noSearchResults: 'Жодного {{content}} не знайдено',
-    resetKeywords: 'Скинути ключові слова',
-    selectCount: '{{count}} вибрано',
-    searchCount: 'Знайти {{count}} {{content}}',
-    noSearchCount: '0 {{content}}',
-    now: 'Зараз',
   },
   placeholder: {
     input: 'Будь ласка, введіть текст',
     select: 'Будь ласка, оберіть параметр',
-    search: 'Пошук...',
   },
   voice: {
     language: {
@@ -168,6 +157,7 @@ const translation = {
     workspace: 'Робочий простір',
     createWorkspace: 'Створити робочий простір',
     helpCenter: 'Довідковий центр',
+    communityFeedback: 'відгуки',
     roadmap: 'Дорожня карта',
     community: 'Спільнота',
     about: 'Про нас',
@@ -175,8 +165,6 @@ const translation = {
     compliance: 'Відповідність',
     support: 'Підтримка',
     github: 'Гітхаб',
-    contactUs: 'Зв’яжіться з нами',
-    forum: 'Форум',
   },
   settings: {
     accountGroup: 'ОБЛІКОВИЙ ЗАПИС',
@@ -503,18 +491,7 @@ const translation = {
       configLoadBalancing: 'Конфігурація балансування навантаження',
       addModelCredential: 'Додати облікові дані моделі',
       providerManagedTip: 'Поточна конфігурація розміщується провайдером.',
-      addModel: 'Додати модель',
-      removeModel: 'Видалити модель',
-      modelCredential: 'Облікові дані моделі',
-      manageCredentials: 'Керування обліковими даними',
-      selectModelCredential: 'Виберіть облікові дані моделі',
-      addNewModelCredential: 'Додайте нові облікові дані моделі',
-      customModelCredentials: 'Облікові дані користувацької моделі',
-      editModelCredential: 'Редагувати облікові дані моделі',
-      customModelCredentialsDeleteTip: 'Облікові дані використовуються і не можуть бути видалені',
     },
-    parametersInvalidRemoved: 'Деякі параметри є недійсними і були видалені',
-    installDataSourceProvider: 'Встановіть постачальників джерел даних',
   },
   dataSource: {
     add: 'Додати джерело даних',
@@ -613,7 +590,6 @@ const translation = {
     viewDoc: 'Переглянути документацію',
     relatedApp: 'пов\'язані програми',
     noRelatedApp: 'Немає пов\'язаних додатків',
-    pipeline: 'Трубопроводу',
   },
   voiceInput: {
     speaking: 'Говоріть зараз...',
@@ -734,7 +710,6 @@ const translation = {
     fileExtensionNotSupport: 'Розширення файлу не підтримується',
     uploadFromComputerReadError: 'Не вдалося прочитати файл, будь ласка, спробуйте ще раз.',
     uploadFromComputerUploadError: 'Не вдалося завантажити файл, будь ласка, завантажте ще раз.',
-    fileExtensionBlocked: 'Цей тип файлу заблоковано з міркувань безпеки',
   },
   license: {
     expiring: 'Термін дії закінчується за один день',
@@ -773,16 +748,6 @@ const translation = {
     content: 'Зміст відгуку',
     placeholder: 'Будь ласка, опишіть, що пішло не так або як ми можемо покращити...',
     subtitle: 'Будь ласка, скажіть нам, що пішло не так із цією відповіддю',
-  },
-  label: {
-    optional: '(необов\'язково)',
-  },
-  noData: 'Немає даних',
-  dynamicSelect: {
-    error: 'Не вдалося завантажити параметри',
-    noData: 'Немає доступних опцій',
-    loading: 'Завантаження параметрів...',
-    selected: '{{count}} вибрано',
   },
 }
 

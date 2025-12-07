@@ -59,7 +59,7 @@ const DemoForm = () => {
         )
       }
       <form.AppForm>
-        <form.Actions />
+        <form.SubmitButton>Submit</form.SubmitButton>
       </form.AppForm>
     </form>
   )

@@ -61,16 +61,6 @@ const translation = {
     selectAll: 'เลือกทั้งหมด',
     deSelectAll: 'ยกเลิกการเลือกทั้งหมด',
     config: 'การตั้งค่า',
-    no: 'ไม่',
-    deleteConfirmTitle: 'ลบหรือไม่?',
-    confirmAction: 'กรุณายืนยันการกระทำของคุณ',
-    yes: 'ใช่',
-    noSearchResults: 'ไม่พบ {{content}}',
-    resetKeywords: 'รีเซ็ตคำสำคัญ',
-    selectCount: '{{count}} ที่เลือก',
-    searchCount: 'ค้นหา {{count}} {{content}}',
-    noSearchCount: '0 {{content}}',
-    now: 'ตอนนี้',
   },
   errorMsg: {
     fieldRequired: '{{field}} เป็นสิ่งจําเป็น',
@@ -79,7 +69,6 @@ const translation = {
   placeholder: {
     input: 'กรุณากรอก',
     select: 'กรุณาเลือก',
-    search: 'ค้นหา...',
   },
   voice: {
     language: {
@@ -167,6 +156,7 @@ const translation = {
     workspace: 'พื้นที่',
     createWorkspace: 'สร้างพื้นที่ทํางาน',
     helpCenter: 'วิธีใช้',
+    communityFeedback: 'การตอบสนอง',
     roadmap: 'แผนงาน',
     community: 'ชุมชน',
     about: 'ประมาณ',
@@ -174,8 +164,6 @@ const translation = {
     github: 'GitHub',
     compliance: 'การปฏิบัติตามข้อกำหนด',
     support: 'การสนับสนุน',
-    contactUs: 'ติดต่อเรา',
-    forum: 'ฟอรั่ม',
   },
   settings: {
     accountGroup: 'ทั่วไป',
@@ -502,17 +490,7 @@ const translation = {
       specifyModelCredentialTip: 'ใช้ข้อมูลรับรองโมเดลที่กำหนดไว้',
       providerManagedTip: 'การกำหนดค่าปัจจุบันถูกโฮสต์โดยผู้ให้บริการ.',
       customModelCredentialsDeleteTip: 'ข้อมูลรับรองกำลังถูกใช้งานและไม่สามารถลบได้',
-      addModel: 'เพิ่มรุ่น',
-      removeModel: 'ลบโมเดล',
-      manageCredentials: 'จัดการข้อมูลประจําตัว',
-      modelCredential: 'ข้อมูลประจําตัวของรุ่น',
-      editModelCredential: 'แก้ไขข้อมูลประจําตัวของโมเดล',
-      selectModelCredential: 'เลือกข้อมูลประจําตัวของโมเดล',
-      customModelCredentials: 'ข้อมูลประจําตัวของโมเดลแบบกําหนดเอง',
-      addNewModelCredential: 'เพิ่มข้อมูลประจําตัวของโมเดลใหม่',
     },
-    parametersInvalidRemoved: 'บางพารามิเตอร์ไม่ถูกต้องและถูกนำออก',
-    installDataSourceProvider: 'ติดตั้งผู้ให้บริการแหล่งข้อมูล',
   },
   dataSource: {
     add: 'เพิ่มแหล่งข้อมูล',
@@ -611,7 +589,6 @@ const translation = {
     viewDoc: 'ดูเอกสารประกอบ',
     relatedApp: 'แอปที่เชื่อมโยง',
     noRelatedApp: 'ไม่มีแอปที่เชื่อมโยง',
-    pipeline: 'ท่อ',
   },
   voiceInput: {
     speaking: 'พูดเดี๋ยวนี้...',
@@ -713,7 +690,6 @@ const translation = {
     uploadFromComputerLimit: 'อัปโหลด {{type}} ต้องไม่เกิน {{size}}',
     pasteFileLinkInvalid: 'ลิงก์ไฟล์ไม่ถูกต้อง',
     fileExtensionNotSupport: 'ไม่รองรับนามสกุลไฟล์',
-    fileExtensionBlocked: 'ประเภทไฟล์นี้ถูกบล็อกด้วยเหตุผลด้านความปลอดภัย',
   },
   tag: {
     placeholder: 'แท็กทั้งหมด',
@@ -767,16 +743,6 @@ const translation = {
     title: 'ให้ข้อเสนอแนะ',
     placeholder: 'กรุณาบรรยายสิ่งที่ผิดพลาดหรือวิธีที่เราสามารถปรับปรุงได้...',
     subtitle: 'กรุณาบอกเราว่าเกิดอะไรขึ้นผิดพลาดกับการตอบนี้',
-  },
-  label: {
-    optional: '(ไม่บังคับ)',
-  },
-  noData: 'ไม่มีข้อมูล',
-  dynamicSelect: {
-    error: 'การโหลดตัวเลือกล้มเหลว',
-    noData: 'ไม่มีตัวเลือก available',
-    loading: 'กำลังโหลดตัวเลือก...',
-    selected: '{{count}} ที่ถูกเลือก',
   },
 }
 

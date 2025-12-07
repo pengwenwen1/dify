@@ -6,8 +6,6 @@ const translation = {
     agents: 'Ajan Stratejileri',
     tools: 'Araçları',
     extensions: 'Uzantı -ları',
-    datasources: 'Veri Kaynakları',
-    triggers: 'Tetikleyiciler',
   },
   categorySingle: {
     tool: 'Alet',
@@ -15,8 +13,6 @@ const translation = {
     extension: 'Uzantı',
     agent: 'Temsilci Stratejisi',
     model: 'Model',
-    datasource: 'Veri Kaynağı',
-    trigger: 'Tetik',
   },
   list: {
     source: {
@@ -47,7 +43,6 @@ const translation = {
       info: 'Eklenti Bilgileri',
       viewDetail: 'ayrıntılara bakın',
       update: 'Güncelleştirmek',
-      back: 'Geri',
     },
     toolSelector: {
       uninstalledContent: 'Bu eklenti yerel/GitHub deposundan yüklenir. Lütfen kurulumdan sonra kullanın.',
@@ -254,9 +249,6 @@ const translation = {
     unavailable: 'Kullanılamıyor',
     customCredentialUnavailable: 'Özel kimlik bilgileri şu anda mevcut değil.',
     credentialUnavailable: 'Kimlik bilgileri şu anda mevcut değil. Lütfen yönetici ile iletişime geçin.',
-    credentialUnavailableInButton: 'Kimlik bilgileri mevcut değil',
-    connectedWorkspace: 'Bağlı Çalışma Alanı',
-    emptyAuth: 'Lütfen kimlik doğrulamasını yapılandırın',
   },
   deprecated: 'Kaldırılmış',
   autoUpdate: {
@@ -308,12 +300,6 @@ const translation = {
     excludeUpdate: 'Aşağıdaki {{num}} eklenti otomatik olarak güncellenmeyecek',
     changeTimezone: 'Zaman dilimini değiştirmek için <setTimezone>Ayarlar</setTimezone> sekmesine gidin',
     partialUPdate: 'Sadece aşağıdaki {{num}} eklenti otomatik olarak güncellenecek',
-  },
-  readmeInfo: {
-    title: 'OKUMA MESELESİ',
-    needHelpCheckReadme: 'Yardıma mı ihtiyacınız var? README dosyasına bakın.',
-    noReadmeAvailable: 'README mevcut değil',
-    failedToFetch: 'README alınamadı',
   },
 }
 

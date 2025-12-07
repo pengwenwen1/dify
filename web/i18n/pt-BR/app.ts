@@ -80,7 +80,6 @@ const translation = {
     noAppsFound: 'Nenhum aplicativo encontrado',
     advancedShortDescription: 'Fluxo aprimorado para conversas de múltiplos turnos',
     dropDSLToCreateApp: 'Cole o arquivo DSL aqui para criar o aplicativo',
-    import: 'Importação',
   },
   editApp: 'Editar Informações',
   editAppTitle: 'Editar Informações do Aplicativo',
@@ -149,14 +148,6 @@ const translation = {
       viewDocsLink: 'Ver documentação de {{key}}',
       removeConfirmTitle: 'Remover configuração de {{key}}?',
       removeConfirmContent: 'A configuração atual está em uso, removê-la desligará o recurso de Rastreamento.',
-      password: 'Senha',
-      clientId: 'ID do Cliente OAuth',
-      clientSecret: 'Segredo do Cliente OAuth',
-      username: 'Nome de usuário',
-      personalAccessToken: 'Token de Acesso Pessoal (legado)',
-      experimentId: 'ID do Experimento',
-      trackingUri: 'URI de rastreamento',
-      databricksHost: 'URL do Workspace do Databricks',
     },
     view: 'Vista',
     opik: {
@@ -170,18 +161,6 @@ const translation = {
     aliyun: {
       title: 'Monitoramento em Nuvem',
       description: 'A plataforma de observabilidade totalmente gerenciada e sem manutenção fornecida pela Alibaba Cloud, permite monitoramento, rastreamento e avaliação prontos para uso de aplicações Dify.',
-    },
-    mlflow: {
-      title: 'MLflow',
-      description: 'Plataforma LLMOps de código aberto para rastreamento de experimentos, observabilidade e avaliação, para construir aplicações de IA/LLM com confiança.',
-    },
-    databricks: {
-      title: 'Databricks',
-      description: 'Databricks oferece MLflow totalmente gerenciado com forte governança e segurança para armazenar dados de rastreamento.',
-    },
-    tencent: {
-      title: 'Tencent APM',
-      description: 'O Monitoramento de Desempenho de Aplicações da Tencent fornece rastreamento abrangente e análise multidimensional para aplicações LLM.',
     },
   },
   answerIcon: {
@@ -302,8 +281,6 @@ const translation = {
       communityDesc: 'Comunidade do Discord aberta',
       feedbackDesc: 'Discussões de feedback da comunidade aberta',
       docDesc: 'Abra a documentação de ajuda',
-      zenTitle: 'Zen Mode',
-      zenDesc: 'Toggle canvas focus mode',
     },
     emptyState: {
       noAppsFound: 'Nenhum aplicativo encontrado',
@@ -339,13 +316,7 @@ const translation = {
     noMatchingCommands: 'Nenhum comando correspondente encontrado',
     tryDifferentSearch: 'Tente um termo de pesquisa diferente',
     slashHint: 'Digite / para ver todos os comandos disponíveis',
-    tips: 'Pressione ↑↓ para navegar',
-    selectToNavigate: 'Selecione para navegar',
-    pressEscToClose: 'Pressione ESC para fechar',
-    startTyping: 'Comece a digitar para pesquisar',
   },
-  notPublishedYet: 'O aplicativo ainda não foi publicado',
-  noUserInputNode: 'Nodo de entrada do usuário ausente',
 }
 
 export default translation

@@ -5,15 +5,15 @@ from sqlalchemy import event
 from sqlalchemy.pool import Pool
 
 from dify_app import DifyApp
-from models.engine import db
+from models import db
 
 logger = logging.getLogger(__name__)
 
 # Global flag to avoid duplicate registration of event listener
-_gevent_compatibility_setup: bool = False
+_GEVENT_COMPATIBILITY_SETUP: bool = False
 
 
-def _safe_rollback(connection):
+def _safe_rollback(connection) -> None:
     """Safely rollback database connection.
 
     Args:
@@ -25,15 +25,15 @@ def _safe_rollback(connection):
         logger.exception("Failed to rollback connection")
 
 
-def _setup_gevent_compatibility():
-    global _gevent_compatibility_setup  # pylint: disable=global-statement
+def _setup_gevent_compatibility() -> None:
+    global _GEVENT_COMPATIBILITY_SETUP  # pylint: disable=global-statement
 
     # Avoid duplicate registration
-    if _gevent_compatibility_setup:
+    if _GEVENT_COMPATIBILITY_SETUP:
         return
 
     @event.listens_for(Pool, "reset")
-    def _safe_reset(dbapi_connection, connection_record, reset_state):  # pyright: ignore[reportUnusedFunction]
+    def _safe_reset(dbapi_connection, connection_record, reset_state) -> None:  # pylint: disable=unused-argument
         if reset_state.terminate_only:
             return
 
@@ -47,7 +47,7 @@ def _setup_gevent_compatibility():
         except (AttributeError, ImportError):
             _safe_rollback(dbapi_connection)
 
-    _gevent_compatibility_setup = True
+    _GEVENT_COMPATIBILITY_SETUP = True
 
 
 def init_app(app: DifyApp):

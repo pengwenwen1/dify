@@ -21,7 +21,7 @@ const DatasetsDetailProvider: FC<DatasetsDetailProviderProps> = ({
   nodes,
   children,
 }) => {
-  const storeRef = useRef<DatasetsDetailStoreApi>(undefined)
+  const storeRef = useRef<DatasetsDetailStoreApi>()
 
   if (!storeRef.current)
     storeRef.current = createDatasetsDetailStore()

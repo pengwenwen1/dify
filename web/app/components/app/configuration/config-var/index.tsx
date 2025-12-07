@@ -1,11 +1,10 @@
 'use client'
 import type { FC } from 'react'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'ahooks'
 import { useContext } from 'use-context-selector'
-import { produce } from 'immer'
-import { ReactSortable } from 'react-sortablejs'
+import produce from 'immer'
 import Panel from '../base/feature-panel'
 import EditModal from './config-modal'
 import VarItem from './var-item'
@@ -17,13 +16,12 @@ import { getNewVar, hasDuplicateStr } from '@/utils/var'
 import Toast from '@/app/components/base/toast'
 import Confirm from '@/app/components/base/confirm'
 import ConfigContext from '@/context/debug-configuration'
-import { AppModeEnum } from '@/types/app'
+import { AppType } from '@/types/app'
 import type { ExternalDataTool } from '@/models/common'
 import { useModalContext } from '@/context/modal-context'
 import { useEventEmitterContextContext } from '@/context/event-emitter'
 import type { InputVar } from '@/app/components/workflow/types'
 import { InputVarType } from '@/app/components/workflow/types'
-import cn from '@/utils/classnames'
 
 export const ADD_EXTERNAL_DATA_TOOL = 'ADD_EXTERNAL_DATA_TOOL'
 
@@ -121,9 +119,7 @@ const ConfigVar: FC<IConfigVarProps> = ({ promptVariables, readonly, onPromptVar
         icon,
         icon_background,
       },
-      onSaveCallback: (newExternalDataTool?: ExternalDataTool) => {
-        if (!newExternalDataTool)
-          return
+      onSaveCallback: (newExternalDataTool: ExternalDataTool) => {
         const newPromptVariables = oldPromptVariables.map((item, i) => {
           if (i === index) {
             return {
@@ -201,7 +197,7 @@ const ConfigVar: FC<IConfigVarProps> = ({ promptVariables, readonly, onPromptVar
   const handleRemoveVar = (index: number) => {
     const removeVar = promptVariables[index]
 
-    if (mode === AppModeEnum.COMPLETION && dataSets.length > 0 && removeVar.is_context_var) {
+    if (mode === AppType.completion && dataSets.length > 0 && removeVar.is_context_var) {
       showDeleteContextVarModal()
       setRemoveIndex(index)
       return
@@ -222,16 +218,6 @@ const ConfigVar: FC<IConfigVarProps> = ({ promptVariables, readonly, onPromptVar
 
     showEditModal()
   }
-
-  const promptVariablesWithIds = useMemo(() => promptVariables.map((item) => {
-    return {
-      id: item.key,
-      variable: { ...item },
-    }
-  }), [promptVariables])
-
-  const canDrag = !readonly && promptVariables.length > 1
-
   return (
     <Panel
       className="mt-2"
@@ -259,32 +245,18 @@ const ConfigVar: FC<IConfigVarProps> = ({ promptVariables, readonly, onPromptVar
       )}
       {hasVar && (
         <div className='mt-1 px-3 pb-3'>
-          <ReactSortable
-            className='space-y-1'
-            list={promptVariablesWithIds}
-            setList={(list) => { onPromptVariablesChange?.(list.map(item => item.variable)) }}
-            handle='.handle'
-            ghostClass='opacity-50'
-            animation={150}
-          >
-            {promptVariablesWithIds.map((item, index) => {
-              const { key, name, type, required, config, icon, icon_background } = item.variable
-              return (
-                <VarItem
-                  className={cn(canDrag && 'handle')}
-                  key={key}
-                  readonly={readonly}
-                  name={key}
-                  label={name}
-                  required={!!required}
-                  type={type}
-                  onEdit={() => handleConfig({ type, key, index, name, config, icon, icon_background })}
-                  onRemove={() => handleRemoveVar(index)}
-                  canDrag={canDrag}
-                />
-              )
-            })}
-          </ReactSortable>
+          {promptVariables.map(({ key, name, type, required, config, icon, icon_background }, index) => (
+            <VarItem
+              key={index}
+              readonly={readonly}
+              name={key}
+              label={name}
+              required={!!required}
+              type={type}
+              onEdit={() => handleConfig({ type, key, index, name, config, icon, icon_background })}
+              onRemove={() => handleRemoveVar(index)}
+            />
+          ))}
         </div>
       )}
 

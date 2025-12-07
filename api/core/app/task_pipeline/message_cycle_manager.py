@@ -1,8 +1,6 @@
-import hashlib
 import logging
-import time
 from threading import Thread
-from typing import Union
+from typing import Optional, Union
 
 from flask import Flask, current_app
 from sqlalchemy import select
@@ -33,7 +31,6 @@ from core.app.entities.task_entities import (
 from core.llm_generator.llm_generator import LLMGenerator
 from core.tools.signature import sign_tool_file
 from extensions.ext_database import db
-from extensions.ext_redis import redis_client
 from models.model import AppMode, Conversation, MessageAnnotation, MessageFile
 from services.annotation_service import AppAnnotationService
 
@@ -51,11 +48,11 @@ class MessageCycleManager:
             AdvancedChatAppGenerateEntity,
         ],
         task_state: Union[EasyUITaskState, WorkflowTaskState],
-    ):
+    ) -> None:
         self._application_generate_entity = application_generate_entity
         self._task_state = task_state
 
-    def generate_conversation_name(self, *, conversation_id: str, query: str) -> Thread | None:
+    def generate_conversation_name(self, *, conversation_id: str, query: str) -> Optional[Thread]:
         """
         Generate conversation name.
         :param conversation_id: conversation id
@@ -71,8 +68,6 @@ class MessageCycleManager:
 
         if auto_generate_conversation_name and is_first_message:
             # start generate thread
-            # time.sleep not block other logic
-            time.sleep(1)
             thread = Thread(
                 target=self._generate_conversation_name_worker,
                 kwargs={
@@ -81,7 +76,7 @@ class MessageCycleManager:
                     "query": query,
                 },
             )
-            thread.daemon = True
+
             thread.start()
 
             return thread
@@ -97,33 +92,25 @@ class MessageCycleManager:
             if not conversation:
                 return
 
-            if conversation.mode != AppMode.COMPLETION:
+            if conversation.mode != AppMode.COMPLETION.value:
                 app_model = conversation.app
                 if not app_model:
                     return
 
                 # generate conversation name
-                query_hash = hashlib.md5(query.encode()).hexdigest()[:16]
-                cache_key = f"conv_name:{conversation_id}:{query_hash}"
+                try:
+                    name = LLMGenerator.generate_conversation_name(app_model.tenant_id, query)
+                    conversation.name = name
+                except Exception:
+                    if dify_config.DEBUG:
+                        logger.exception("generate conversation name failed, conversation_id: %s", conversation_id)
+                    pass
 
-                cached_name = redis_client.get(cache_key)
-                if cached_name:
-                    name = cached_name.decode("utf-8")
-                else:
-                    try:
-                        name = LLMGenerator.generate_conversation_name(
-                            app_model.tenant_id, query, conversation_id, conversation.app_id
-                        )
-                        redis_client.setex(cache_key, 3600, name)
-                    except Exception:
-                        if dify_config.DEBUG:
-                            logger.exception("generate conversation name failed, conversation_id: %s", conversation_id)
-                        name = query[:47] + "..." if len(query) > 50 else query
-                conversation.name = name
+                db.session.merge(conversation)
                 db.session.commit()
                 db.session.close()
 
-    def handle_annotation_reply(self, event: QueueAnnotationReplyEvent) -> MessageAnnotation | None:
+    def handle_annotation_reply(self, event: QueueAnnotationReplyEvent) -> Optional[MessageAnnotation]:
         """
         Handle annotation reply.
         :param event: event
@@ -144,38 +131,16 @@ class MessageCycleManager:
 
         return None
 
-    def handle_retriever_resources(self, event: QueueRetrieverResourcesEvent):
+    def handle_retriever_resources(self, event: QueueRetrieverResourcesEvent) -> None:
         """
         Handle retriever resources.
         :param event: event
         :return:
         """
-        if not self._application_generate_entity.app_config.additional_features:
-            raise ValueError("Additional features not found")
         if self._application_generate_entity.app_config.additional_features.show_retrieve_source:
-            merged_resources = [r for r in self._task_state.metadata.retriever_resources or [] if r]
-            existing_ids = {(r.dataset_id, r.document_id) for r in merged_resources if r.dataset_id and r.document_id}
+            self._task_state.metadata.retriever_resources = event.retriever_resources
 
-            # Add new unique resources from the event
-            for resource in event.retriever_resources or []:
-                if not resource:
-                    continue
-
-                is_duplicate = (
-                    resource.dataset_id
-                    and resource.document_id
-                    and (resource.dataset_id, resource.document_id) in existing_ids
-                )
-
-                if not is_duplicate:
-                    merged_resources.append(resource)
-
-            for i, resource in enumerate(merged_resources, 1):
-                resource.position = i
-
-            self._task_state.metadata.retriever_resources = merged_resources
-
-    def message_file_to_stream_response(self, event: QueueMessageFileEvent) -> MessageFileStreamResponse | None:
+    def message_file_to_stream_response(self, event: QueueMessageFileEvent) -> Optional[MessageFileStreamResponse]:
         """
         Message file to stream response.
         :param event: event
@@ -214,7 +179,7 @@ class MessageCycleManager:
         return None
 
     def message_to_stream_response(
-        self, answer: str, message_id: str, from_variable_selector: list[str] | None = None
+        self, answer: str, message_id: str, from_variable_selector: Optional[list[str]] = None
     ) -> MessageStreamResponse:
         """
         Message to stream response.

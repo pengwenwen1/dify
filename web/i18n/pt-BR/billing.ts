@@ -8,6 +8,7 @@ const translation = {
   viewBilling: 'Ver informações de cobrança',
   buyPermissionDeniedTip: 'Por favor, entre em contato com o administrador da sua empresa para assinar',
   plansCommon: {
+    title: 'Escolha o plano que melhor atende você',
     yearlyTip: 'Receba 2 meses grátis assinando anualmente!',
     mostPopular: 'Mais Popular',
     planRange: {
@@ -28,7 +29,6 @@ const translation = {
     vectorSpace: 'Espaço Vetorial',
     vectorSpaceTooltip: 'O Espaço Vetorial é o sistema de memória de longo prazo necessário para que LLMs compreendam seus dados.',
     documentProcessingPriority: 'Prioridade no Processamento de Documentos',
-    documentProcessingPriorityTip: 'Para maior prioridade no processamento de documentos, atualize seu plano.',
     documentProcessingPriorityUpgrade: 'Processe mais dados com maior precisão e velocidade.',
     priority: {
       'standard': 'Padrão',
@@ -80,7 +80,7 @@ const translation = {
     documentsRequestQuota: '{{count,number}}/min Limite de Taxa de Solicitação de Conhecimento',
     cloud: 'Serviço de Nuvem',
     teamWorkspace: '{{count,number}} Espaço de Trabalho da Equipe',
-    apiRateLimitUnit: '{{count,number}}',
+    apiRateLimitUnit: '{{count,number}}/dia',
     freeTrialTipSuffix: 'Nenhum cartão de crédito necessário',
     teamMember_other: '{{count,number}} Membros da Equipe',
     comparePlanAndFeatures: 'Compare planos e recursos',
@@ -93,29 +93,6 @@ const translation = {
     unlimitedApiRate: 'Sem limite de taxa da API',
     apiRateLimitTooltip: 'O limite da taxa da API se aplica a todas as solicitações feitas através da API Dify, incluindo geração de texto, conversas de chat, execuções de fluxo de trabalho e processamento de documentos.',
     documentsRequestQuotaTooltip: 'Especifica o número total de ações que um espaço de trabalho pode realizar por minuto dentro da base de conhecimento, incluindo criação, exclusão, atualizações de conjuntos de dados, uploads de documentos, modificações, arquivamento e consultas à base de conhecimento. Esse métrica é utilizada para avaliar o desempenho das solicitações à base de conhecimento. Por exemplo, se um usuário do Sandbox realizar 10 testes de impacto consecutivos dentro de um minuto, seu espaço de trabalho ficará temporariamente restrito de realizar as seguintes ações no minuto seguinte: criação, exclusão, atualizações de conjuntos de dados e uploads ou modificações de documentos.',
-    startBuilding: 'Comece a construir',
-    taxTip: 'Todos os preços de assinatura (mensal/anual) não incluem os impostos aplicáveis (por exemplo, IVA, imposto sobre vendas).',
-    taxTipSecond: 'Se a sua região não tiver requisitos fiscais aplicáveis, nenhum imposto aparecerá no seu checkout e você não será cobrado por taxas adicionais durante todo o período da assinatura.',
-    triggerEvents: {
-      unlimited: 'Eventos de Gatilho Ilimitados',
-      tooltip: 'O número de eventos que iniciam automaticamente fluxos de trabalho através de disparadores de Plugin, Agendamento ou Webhook.',
-      sandbox: '{{count,number}} Acionar Eventos',
-      professional: '{{count,number}} Eventos de disparo/mês',
-    },
-    workflowExecution: {
-      tooltip: 'Prioridade e velocidade da fila de execução de fluxo de trabalho.',
-      priority: 'Execução de Fluxo de Trabalho Prioritário',
-      faster: 'Execução de Fluxo de Trabalho Mais Rápida',
-      standard: 'Execução Padrão de Fluxo de Trabalho',
-    },
-    startNodes: {
-      unlimited: 'Eventos de Gatilho/fluxo de trabalho ilimitados',
-      limited: 'Até {{count}} Acionadores/workflow',
-    },
-    title: {
-      plans: 'planos',
-      description: 'Selecione o plano que melhor se adapta às necessidades da sua equipe.',
-    },
   },
   plans: {
     sandbox: {
@@ -137,14 +114,16 @@ const translation = {
       name: 'Empresa',
       description: 'Obtenha capacidades completas e suporte para sistemas críticos em larga escala.',
       includesTitle: 'Tudo no plano Equipe, além de:',
-      features: ['Soluções de Implantação Escaláveis de Nível Empresarial', 'Autorização de Licença Comercial', 'Recursos Exclusivos para Empresas', 'Múltiplos Espaços de Trabalho e Gestão Empresarial', 'SSO', 'SLAs negociados pelos parceiros da Dify', 'Segurança e Controles Avançados', 'Atualizações e Manutenção pela Dify Oficialmente', 'Suporte Técnico Profissional'],
+      features: {
+      },
       btnText: 'Contate Vendas',
       priceTip: 'Faturamento Anual Apenas',
       price: 'Custom',
       for: 'Para equipes de grande porte',
     },
     community: {
-      features: ['Todos os Recursos Principais Lançados no Repositório Público', 'Espaço de Trabalho Único', 'Está em conformidade com a Licença de Código Aberto Dify'],
+      features: {
+      },
       name: 'Comunidade',
       description: 'Para Usuários Individuais, Pequenas Equipes ou Projetos Não Comerciais',
       includesTitle: 'Recursos Gratuitos:',
@@ -153,7 +132,8 @@ const translation = {
       for: 'Para Usuários Individuais, Pequenas Equipes ou Projetos Não Comerciais',
     },
     premium: {
-      features: ['Confiabilidade Autogerenciada por Diversos Provedores de Nuvem', 'Espaço de Trabalho Único', 'Personalização de Logo e Marca do WebApp', 'Suporte Prioritário por E-mail e Chat'],
+      features: {
+      },
       includesTitle: 'Tudo da Comunidade, além de:',
       for: 'Para organizações e equipes de médio porte',
       price: 'Escalável',
@@ -187,18 +167,8 @@ const translation = {
     vectorSpace: 'Armazenamento de Dados do Conhecimento',
     vectorSpaceTooltip: 'Documentos com o modo de indexação de Alta Qualidade consumirã recursos de Armazenamento de Dados de Conhecimento. Quando o Armazenamento de Dados de Conhecimento atingir o limite, novos documentos não serão carregados.',
     buildApps: 'Desenvolver Apps',
-    perMonth: 'por mês',
-    triggerEvents: 'Eventos de Gatilho',
-    resetsIn: 'Reinicia em {{count,number}} dias',
   },
   teamMembers: 'Membros da equipe',
-  triggerLimitModal: {
-    dismiss: 'Dispensar',
-    usageTitle: 'EVENTOS DE GATILHO',
-    title: 'Atualize para desbloquear mais eventos de gatilho',
-    upgrade: 'Atualizar',
-    description: 'Você atingiu o limite de eventos de gatilho de fluxo de trabalho para este plano.',
-  },
 }
 
 export default translation

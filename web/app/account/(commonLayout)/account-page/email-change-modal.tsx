@@ -9,6 +9,7 @@ import Button from '@/app/components/base/button'
 import Input from '@/app/components/base/input'
 import {
   checkEmailExisted,
+  logout,
   resetEmail,
   sendVerifyCode,
   verifyEmail,
@@ -16,7 +17,6 @@ import {
 import { noop } from 'lodash-es'
 import { asyncRunSafe } from '@/utils'
 import type { ResponseError } from '@/service/fetch'
-import { useLogout } from '@/service/use-common'
 
 type Props = {
   show: boolean
@@ -167,12 +167,15 @@ const EmailChangeModal = ({ onClose, email, show }: Props) => {
     setStep(STEP.verifyNew)
   }
 
-  const { mutateAsync: logout } = useLogout()
   const handleLogout = async () => {
-    await logout()
+    await logout({
+      url: '/logout',
+      params: {},
+    })
 
     localStorage.removeItem('setup_status')
-    // Tokens are now stored in cookies and cleared by backend
+    localStorage.removeItem('console_token')
+    localStorage.removeItem('refresh_token')
 
     router.push('/signin')
   }

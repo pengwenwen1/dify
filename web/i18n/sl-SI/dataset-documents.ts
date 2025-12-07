@@ -81,10 +81,6 @@ const translation = {
       ok: 'V redu',
     },
     learnMore: 'Izvedi več',
-    sort: {
-      uploadTime: 'Čas nalaganja',
-      hitCount: 'Število priklicev',
-    },
   },
   metadata: {
     title: 'Metapodatki',
@@ -103,9 +99,6 @@ const translation = {
       upload_file: 'Naloži datoteko',
       notion: 'Sinhroniziraj iz Notion',
       github: 'Sinhroniziraj iz Github',
-      local_file: 'Lokalna datoteka',
-      online_document: 'Spletni dokument',
-      website_crawl: 'Iskanje po spletnih mestih',
     },
     type: {
       book: 'Knjiga',
@@ -343,7 +336,6 @@ const translation = {
     childMaxTokens: 'Otrok',
     pause: 'Zaustavi',
     parentMaxTokens: 'Starš',
-    waiting: 'Čakanje na zajemanje...',
   },
   segment: {
     paragraphs: 'Odstavki',

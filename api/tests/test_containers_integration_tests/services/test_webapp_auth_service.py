@@ -1,5 +1,3 @@
-import time
-import uuid
 from unittest.mock import patch
 
 import pytest
@@ -7,7 +5,7 @@ from faker import Faker
 from werkzeug.exceptions import NotFound, Unauthorized
 
 from libs.password import hash_password
-from models import Account, AccountStatus, Tenant, TenantAccountJoin, TenantAccountRole
+from models.account import Account, AccountStatus, Tenant, TenantAccountJoin, TenantAccountRole
 from models.model import App, Site
 from services.errors.account import AccountLoginError, AccountNotFoundError, AccountPasswordError
 from services.webapp_auth_service import WebAppAuthService, WebAppAuthType
@@ -35,7 +33,9 @@ class TestWebAppAuthService:
             mock_enterprise_service.WebAppAuth.get_app_access_mode_by_id.return_value = type(
                 "MockWebAppAuth", (), {"access_mode": "private"}
             )()
-            # Note: get_app_access_mode_by_code method was removed in refactoring
+            mock_enterprise_service.WebAppAuth.get_app_access_mode_by_code.return_value = type(
+                "MockWebAppAuth", (), {"access_mode": "private"}
+            )()
 
             yield {
                 "passport_service": mock_passport_service,
@@ -57,12 +57,10 @@ class TestWebAppAuthService:
             tuple: (account, tenant) - Created account and tenant instances
         """
         fake = Faker()
-        import uuid
 
-        # Create account with unique email to avoid collisions
-        unique_email = f"test_{uuid.uuid4().hex[:8]}@example.com"
+        # Create account
         account = Account(
-            email=unique_email,
+            email=fake.email(),
             name=fake.name(),
             interface_language="en-US",
             status="active",
@@ -85,7 +83,7 @@ class TestWebAppAuthService:
         join = TenantAccountJoin(
             tenant_id=tenant.id,
             account_id=account.id,
-            role=TenantAccountRole.OWNER,
+            role=TenantAccountRole.OWNER.value,
             current=True,
         )
         db.session.add(join)
@@ -111,11 +109,8 @@ class TestWebAppAuthService:
         password = fake.password(length=12)
 
         # Create account with password
-        import uuid
-
-        unique_email = f"test_{uuid.uuid4().hex[:8]}@example.com"
         account = Account(
-            email=unique_email,
+            email=fake.email(),
             name=fake.name(),
             interface_language="en-US",
             status="active",
@@ -148,7 +143,7 @@ class TestWebAppAuthService:
         join = TenantAccountJoin(
             tenant_id=tenant.id,
             account_id=account.id,
-            role=TenantAccountRole.OWNER,
+            role=TenantAccountRole.OWNER.value,
             current=True,
         )
         db.session.add(join)
@@ -230,7 +225,7 @@ class TestWebAppAuthService:
         assert result.id == account.id
         assert result.email == account.email
         assert result.name == account.name
-        assert result.status == AccountStatus.ACTIVE
+        assert result.status == AccountStatus.ACTIVE.value
 
         # Verify database state
         from extensions.ext_database import db
@@ -248,15 +243,9 @@ class TestWebAppAuthService:
         - Proper error handling for non-existent accounts
         - Correct exception type and message
         """
-        # Arrange: Generate a guaranteed non-existent email
-        # Use UUID and timestamp to ensure uniqueness
-        unique_id = str(uuid.uuid4()).replace("-", "")
-        timestamp = str(int(time.time() * 1000000))  # microseconds
-        non_existent_email = f"nonexistent_{unique_id}_{timestamp}@test-domain-that-never-exists.invalid"
-
-        # Double-check this email doesn't exist in the database
-        existing_account = db_session_with_containers.query(Account).filter_by(email=non_existent_email).first()
-        assert existing_account is None, f"Test email {non_existent_email} already exists in database"
+        # Arrange: Use non-existent email
+        fake = Faker()
+        non_existent_email = fake.email()
 
         # Act & Assert: Verify proper error handling
         with pytest.raises(AccountNotFoundError):
@@ -278,7 +267,7 @@ class TestWebAppAuthService:
             email=fake.email(),
             name=fake.name(),
             interface_language="en-US",
-            status=AccountStatus.BANNED,
+            status=AccountStatus.BANNED.value,
         )
 
         # Hash password
@@ -333,12 +322,9 @@ class TestWebAppAuthService:
         """
         # Arrange: Create account without password
         fake = Faker()
-        import uuid
-
-        unique_email = f"test_{uuid.uuid4().hex[:8]}@example.com"
 
         account = Account(
-            email=unique_email,
+            email=fake.email(),
             name=fake.name(),
             interface_language="en-US",
             status="active",
@@ -409,7 +395,7 @@ class TestWebAppAuthService:
         assert result.id == account.id
         assert result.email == account.email
         assert result.name == account.name
-        assert result.status == AccountStatus.ACTIVE
+        assert result.status == AccountStatus.ACTIVE.value
 
         # Verify database state
         from extensions.ext_database import db
@@ -445,15 +431,12 @@ class TestWebAppAuthService:
         """
         # Arrange: Create banned account
         fake = Faker()
-        import uuid
-
-        unique_email = f"test_{uuid.uuid4().hex[:8]}@example.com"
 
         account = Account(
-            email=unique_email,
+            email=fake.email(),
             name=fake.name(),
             interface_language="en-US",
-            status=AccountStatus.BANNED,
+            status=AccountStatus.BANNED.value,
         )
 
         from extensions.ext_database import db
@@ -861,14 +844,13 @@ class TestWebAppAuthService:
         - Mock service integration
         """
         # Arrange: Setup mock for enterprise service
-        mock_external_service_dependencies["app_service"].get_app_id_by_code.return_value = "mock_app_id"
-        setting = type("MockWebAppAuth", (), {"access_mode": "sso_verified"})()
+        mock_webapp_auth = type("MockWebAppAuth", (), {"access_mode": "sso_verified"})()
         mock_external_service_dependencies[
             "enterprise_service"
-        ].WebAppAuth.get_app_access_mode_by_id.return_value = setting
+        ].WebAppAuth.get_app_access_mode_by_code.return_value = mock_webapp_auth
 
         # Act: Execute authentication type determination
-        result: WebAppAuthType = WebAppAuthService.get_app_auth_type(app_code="mock_app_code")
+        result = WebAppAuthService.get_app_auth_type(app_code="mock_app_code")
 
         # Assert: Verify correct result
         assert result == WebAppAuthType.EXTERNAL
@@ -876,7 +858,7 @@ class TestWebAppAuthService:
         # Verify mock service was called correctly
         mock_external_service_dependencies[
             "enterprise_service"
-        ].WebAppAuth.get_app_access_mode_by_id.assert_called_once_with(app_id="mock_app_id")
+        ].WebAppAuth.get_app_access_mode_by_code.assert_called_once_with("mock_app_code")
 
     def test_get_app_auth_type_no_parameters(self, db_session_with_containers, mock_external_service_dependencies):
         """

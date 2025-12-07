@@ -58,15 +58,15 @@ class ReactMultiDatasetRouter:
         model_instance: ModelInstance,
         user_id: str,
         tenant_id: str,
-    ) -> tuple[Union[str, None], LLMUsage]:
+    ) -> Union[str, None]:
         """Given input, decided what to do.
         Returns:
             Action specifying what tool to use.
         """
         if len(dataset_tools) == 0:
-            return None, LLMUsage.empty_usage()
+            return None
         elif len(dataset_tools) == 1:
-            return dataset_tools[0].name, LLMUsage.empty_usage()
+            return dataset_tools[0].name
 
         try:
             return self._react_invoke(
@@ -78,7 +78,7 @@ class ReactMultiDatasetRouter:
                 tenant_id=tenant_id,
             )
         except Exception:
-            return None, LLMUsage.empty_usage()
+            return None
 
     def _react_invoke(
         self,
@@ -91,7 +91,7 @@ class ReactMultiDatasetRouter:
         prefix: str = PREFIX,
         suffix: str = SUFFIX,
         format_instructions: str = FORMAT_INSTRUCTIONS,
-    ) -> tuple[Union[str, None], LLMUsage]:
+    ) -> Union[str, None]:
         prompt: Union[list[ChatModelMessage], CompletionModelPromptTemplate]
         if model_config.mode == "chat":
             prompt = self.create_chat_prompt(
@@ -120,7 +120,7 @@ class ReactMultiDatasetRouter:
             memory=None,
             model_config=model_config,
         )
-        result_text, usage = self._invoke_llm(
+        result_text, _ = self._invoke_llm(
             completion_param=model_config.parameters,
             model_instance=model_instance,
             prompt_messages=prompt_messages,
@@ -131,8 +131,8 @@ class ReactMultiDatasetRouter:
         output_parser = StructuredChatOutputParser()
         react_decision = output_parser.parse(result_text)
         if isinstance(react_decision, ReactAction):
-            return react_decision.tool, usage
-        return None, usage
+            return react_decision.tool
+        return None
 
     def _invoke_llm(
         self,

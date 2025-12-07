@@ -11,16 +11,16 @@ logger = logging.getLogger(__name__)
 
 from configs.remote_settings_sources.base import RemoteSettingsSource
 
-from .utils import parse_config
+from .utils import _parse_config
 
 
 class NacosSettingsSource(RemoteSettingsSource):
     def __init__(self, configs: Mapping[str, Any]):
         self.configs = configs
-        self.remote_configs: dict[str, str] = {}
+        self.remote_configs: dict[str, Any] = {}
         self.async_init()
 
-    def async_init(self) -> None:
+    def async_init(self):
         data_id = os.getenv("DIFY_ENV_NACOS_DATA_ID", "dify-api-env.properties")
         group = os.getenv("DIFY_ENV_NACOS_GROUP", "nacos-dify")
         tenant = os.getenv("DIFY_ENV_NACOS_NAMESPACE", "")
@@ -33,15 +33,18 @@ class NacosSettingsSource(RemoteSettingsSource):
             logger.exception("[get-access-token] exception occurred")
             raise
 
-    def _parse_config(self, content: str) -> dict[str, str]:
+    def _parse_config(self, content: str) -> dict:
         if not content:
             return {}
         try:
-            return parse_config(content)
+            return _parse_config(self, content)
         except Exception as e:
             raise RuntimeError(f"Failed to parse config: {e}")
 
     def get_field_value(self, field: FieldInfo, field_name: str) -> tuple[Any, str, bool]:
+        if not isinstance(self.remote_configs, dict):
+            raise ValueError(f"remote configs is not dict, but {type(self.remote_configs)}")
+
         field_value = self.remote_configs.get(field_name)
         if field_value is None:
             return None, field_name, False

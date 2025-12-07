@@ -82,10 +82,6 @@ const translation = {
       ok: 'OK',
     },
     learnMore: 'Ulteriori informazioni',
-    sort: {
-      uploadTime: 'Ora di caricamento',
-      hitCount: 'Conteggio Recuperi',
-    },
   },
   metadata: {
     title: 'Metadati',
@@ -104,9 +100,6 @@ const translation = {
       upload_file: 'Carica File',
       notion: 'Sincronizza da Notion',
       github: 'Sincronizza da Github',
-      online_document: 'Documento online',
-      local_file: 'File locale',
-      website_crawl: 'Scansione del sito web',
     },
     type: {
       book: 'Libro',
@@ -345,7 +338,6 @@ const translation = {
     pause: 'Pausa',
     hierarchical: 'Genitore-figlio',
     parentMaxTokens: 'Genitore',
-    waiting: 'Attesa dell\'incorporamento...',
   },
   segment: {
     paragraphs: 'Paragrafi',

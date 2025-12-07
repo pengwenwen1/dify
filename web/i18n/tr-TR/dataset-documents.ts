@@ -81,10 +81,6 @@ const translation = {
       ok: 'Tamam',
     },
     learnMore: 'Daha fazla bilgi edinin',
-    sort: {
-      uploadTime: 'Yükleme Zamanı',
-      hitCount: 'Alım Sayısı',
-    },
   },
   metadata: {
     title: 'Meta Veri',
@@ -102,9 +98,6 @@ const translation = {
       upload_file: 'Dosya Yükle',
       notion: 'Notion\'dan Senkronize Et',
       github: 'GitHub\'dan Senkronize Et',
-      website_crawl: 'Web Sitesi Taraması',
-      online_document: 'Çevrimiçi Belge',
-      local_file: 'Yerel Dosya',
     },
     type: {
       book: 'Kitap',
@@ -342,7 +335,6 @@ const translation = {
     parentMaxTokens: 'Ebeveyn',
     hierarchical: 'Ebeveyn-çocuk',
     pause: 'Duraklat',
-    waiting: 'Gömme bekleniyor...',
   },
   segment: {
     paragraphs: 'Paragraflar',
